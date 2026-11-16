@@ -7,9 +7,9 @@
 
 ## 一覧
 
-| スターター | 元のテンプレート | 題材 |
-| ---------- | ---------------- | ---- |
-| [decisions-web-service](decisions-web-service/STARTER.md) | [core/decisions](../core/decisions) | タスクボード Web サービスの API で、設計判断8件（置き換え・不採用・提案中を含む） |
+| スターター                                                          | 元のテンプレート                                | 題材                                                                                             |
+| ------------------------------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [decisions-web-service](decisions-web-service/STARTER.md)           | [core/decisions](../core/decisions)             | タスクボード Web サービスの API で、設計判断8件（置き換え・不採用・提案中を含む）                |
 | [knowledge-vault-daily-life](knowledge-vault-daily-life/STARTER.md) | [core/knowledge-vault](../core/knowledge-vault) | 架空の人物の日常生活の記録を約1年分（近況・古い記録の要約・やめたことの台帳・area での絞り込み） |
 
 ## 構成
@@ -27,22 +27,22 @@ starter/<template>-<題材>/      # 例: decisions-web-service
 
 ```yaml
 ---
-template: decisions                       # core/ 直下のフォルダ名
-installed_at: decisions                   # スターター内のコピー先
-extended: [AGENTS.md]                     # 追記だけを許すコピー（「導入先固有の運用」節など）
-lint: decisions/lint_decisions.py decisions   # スターターのルートから実行する lint と引数
+template: decisions # core/ 直下のフォルダ名
+installed_at: decisions # スターター内のコピー先
+extended: [AGENTS.md] # 追記だけを許すコピー（「導入先固有の運用」節など）
+lint: decisions/lint_decisions.py decisions # スターターのルートから実行する lint と引数
 ---
 ```
 
-| キー | 必須 | 意味 |
-| --- | --- | --- |
-| `template` | ✓ | `core/` 直下のフォルダ名 |
-| `source` | | コピー元を `core/<template>/<source>/` に絞る（省略時はテンプレート全体） |
-| `installed_at` | ✓ | スターター内のコピー先（ルートなら `.`） |
-| `extended` | ✓ | 追記だけを許すコピー（無ければ `[]`） |
-| `adapted` | | テンプレートの導入手順が書き換えを求めるファイル（存在だけ検査） |
-| `samples` | | テンプレートのサンプルデータで、スターターの成果物に置き換えるもの（検査しない。`*` は `/` をまたぐ） |
-| `lint` | ✓ | スターターのルートから実行する検査。`[a, b]` で複数。`uv` で始まるものはそのまま実行し、それ以外は Python スクリプトとして実行する |
+| キー           | 必須 | 意味                                                                                                                               |
+| -------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `template`     | ✓    | `core/` 直下のフォルダ名                                                                                                           |
+| `source`       |      | コピー元を `core/<template>/<source>/` に絞る（省略時はテンプレート全体）                                                          |
+| `installed_at` | ✓    | スターター内のコピー先（ルートなら `.`）                                                                                           |
+| `extended`     | ✓    | 追記だけを許すコピー（無ければ `[]`）                                                                                              |
+| `adapted`      |      | テンプレートの導入手順が書き換えを求めるファイル（存在だけ検査）                                                                   |
+| `samples`      |      | テンプレートのサンプルデータで、スターターの成果物に置き換えるもの（検査しない。`*` は `/` をまたぐ）                              |
+| `lint`         | ✓    | スターターのルートから実行する検査。`[a, b]` で複数。`uv` で始まるものはそのまま実行し、それ以外は Python スクリプトとして実行する |
 
 ## スターターを作る・直すときのルール
 

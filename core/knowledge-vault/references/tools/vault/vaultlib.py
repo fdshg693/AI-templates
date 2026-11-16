@@ -24,7 +24,9 @@ from schema import ENTITY_STATUS, KINDS, LINTS, SCOPES, F, Kind, StatusCategory
 ROOT = Path(__file__).resolve().parents[2]  # tools/vault/ の2階層上 = リポジトリルート
 _FM = re.compile(r"\A---[ \t]*\r?\n(.*?)\r?\n---[ \t]*(?:\r?\n|\Z)", re.DOTALL)
 _EVENT_NAME = re.compile(r"^(\d{4}-\d{2}-\d{2})_(.+)$")
-_EVENT_LINK = re.compile(r"\]\((\d{4}-\d{2}-\d{2}_[^)/\s]+\.md)\)")  # index.md 本文から同じフォルダのイベントログへのリンク
+_EVENT_LINK = re.compile(
+    r"\]\((\d{4}-\d{2}-\d{2}_[^)/\s]+\.md)\)"
+)  # index.md 本文から同じフォルダのイベントログへのリンク
 
 
 # ---------------------------------------------------------------------------
@@ -48,7 +50,7 @@ def split(text: str) -> Markdown:
     data = yaml.safe_load(m.group(1)) or {}
     if not isinstance(data, dict):
         raise ValueError("フロントマターが YAML の mapping ではない")
-    return Markdown(data, text[m.end():], newline, True)
+    return Markdown(data, text[m.end() :], newline, True)
 
 
 def read(path: Path) -> Markdown:
@@ -69,7 +71,9 @@ class _Dumper(yaml.SafeDumper):
         return True
 
 
-_Dumper.add_representer(_Quoted, lambda d, v: d.represent_scalar("tag:yaml.org,2002:str", v, style='"'))
+_Dumper.add_representer(
+    _Quoted, lambda d, v: d.represent_scalar("tag:yaml.org,2002:str", v, style='"')
+)
 
 
 def _clean(value: Any) -> Any:
@@ -85,7 +89,9 @@ def _clean(value: Any) -> Any:
 
 def render(data: dict[str, Any], body: str, newline: str = "\n") -> str:
     """フロントマター（キー順は data のまま）と本文を組み立てる. 本文は1文字も変えない."""
-    fm = yaml.dump(_clean(data), Dumper=_Dumper, allow_unicode=True, sort_keys=False, width=10**9).rstrip("\n")
+    fm = yaml.dump(
+        _clean(data), Dumper=_Dumper, allow_unicode=True, sort_keys=False, width=10**9
+    ).rstrip("\n")
     if newline != "\n":
         fm = fm.replace("\n", newline)
     return f"---{newline}{fm}{newline}---{newline}{body}"
@@ -125,7 +131,11 @@ def _check(f: F, value: Any, loc: str) -> list[str]:
     if t == "bool":
         return [] if isinstance(value, bool) else [f"{loc}: true / false にする"]
     if t == "date":
-        return [] if isinstance(value, dt.date) and not isinstance(value, dt.datetime) else [f"{loc}: YYYY-MM-DD にする"]
+        return (
+            []
+            if isinstance(value, dt.date) and not isinstance(value, dt.datetime)
+            else [f"{loc}: YYYY-MM-DD にする"]
+        )
     if t == "due":
         if isinstance(value, dt.date):
             return []
@@ -133,7 +143,11 @@ def _check(f: F, value: Any, loc: str) -> list[str]:
             return []
         return [f"{loc}: YYYY-MM-DD または YYYY-MM-DD HH:MM にする"]
     if t == "enum":
-        return [] if value in (f.choices or {}) else [f"{loc}: {value!r} は許容値 {list(f.choices or {})} に無い"]
+        return (
+            []
+            if value in (f.choices or {})
+            else [f"{loc}: {value!r} は許容値 {list(f.choices or {})} に無い"]
+        )
     if t == "list[str]":
         if not isinstance(value, list) or not all(isinstance(v, str) for v in value):
             return [f"{loc}: 文字列のリストにする"]
@@ -214,7 +228,8 @@ class Vault:
 
     def events_of(self, entity: Doc) -> list[Doc]:
         return [
-            d for d in self.of("event", entity.scope)
+            d
+            for d in self.of("event", entity.scope)
             if d.folder_key == entity.folder_key and d.rel.split("/")[1] == "scopes"
         ]
 
@@ -243,7 +258,9 @@ def load_doc(kind: Kind, path: Path, root: Path) -> tuple[Doc, list[Issue]]:
     try:
         md = read(path)
     except (yaml.YAMLError, ValueError, UnicodeDecodeError, OSError) as e:
-        return Doc(kind.name, path, rel, {}, "", False, scope, folder_key), [Issue("error", rel, f"読み込めない: {e}")]
+        return Doc(kind.name, path, rel, {}, "", False, scope, folder_key), [
+            Issue("error", rel, f"読み込めない: {e}")
+        ]
     doc = Doc(kind.name, path, rel, md.data, md.body, True, scope, folder_key)
     if not md.has_frontmatter:
         doc.ok = False
@@ -266,9 +283,13 @@ def _check_location(kind: Kind, doc: Doc) -> list[str]:
     out = []
     d = doc.data
     if kind.key_field and doc.folder_key and d.get(kind.key_field) != doc.folder_key:
-        out.append(f"{kind.key_field}={d.get(kind.key_field)} がフォルダ名 {doc.folder_key} と一致しない")
+        out.append(
+            f"{kind.key_field}={d.get(kind.key_field)} がフォルダ名 {doc.folder_key} と一致しない"
+        )
     if kind.scope_field and doc.scope and d.get(kind.scope_field) != doc.scope:
-        out.append(f"{kind.scope_field}={d.get(kind.scope_field)} が配置先 scope {doc.scope} と一致しない")
+        out.append(
+            f"{kind.scope_field}={d.get(kind.scope_field)} が配置先 scope {doc.scope} と一致しない"
+        )
     if kind.event_name:
         m = _EVENT_NAME.match(doc.path.stem)
         if not m:
@@ -307,40 +328,79 @@ def _check_relations(vault: Vault, today: dt.date | None) -> list[Issue]:
         if not doc.ok:
             continue
         if doc.get("contact") and doc.get("contact") not in contacts:
-            issues.append(Issue("warning", doc.rel, f"contact={doc.get('contact')} のコンタクト（vault/contacts/{doc.get('contact')}/）が無い"))
+            issues.append(
+                Issue(
+                    "warning",
+                    doc.rel,
+                    f"contact={doc.get('contact')} のコンタクト（vault/contacts/{doc.get('contact')}/）が無い",
+                )
+            )
         due = _due_date(doc.get("next_due"))
         if (
-            today and due and due < today
+            today
+            and due
+            and due < today
             and doc.get("action_type") in ("action_required", "scheduled")
             and ENTITY_STATUS[doc.get("status")].category == StatusCategory.ACTIVE
         ):
-            issues.append(Issue("warning", doc.rel, f"next_due={due} を過ぎている。next_action / next_due を更新する"))
+            issues.append(
+                Issue(
+                    "warning",
+                    doc.rel,
+                    f"next_due={due} を過ぎている。next_action / next_due を更新する",
+                )
+            )
         for name in _EVENT_LINK.findall(doc.body):
             if not (doc.path.parent / name).is_file():
-                issues.append(Issue("warning", doc.rel, f"本文のリンク先 {name} が無い。digests に畳んだなら本文からリンクを外す"))
+                issues.append(
+                    Issue(
+                        "warning",
+                        doc.rel,
+                        f"本文のリンク先 {name} が無い。digests に畳んだなら本文からリンクを外す",
+                    )
+                )
         digests = doc.get("digests") or []
         for event in vault.events_of(doc):
-            hit = next((g for g in digests if event.ok and g["from"] <= event.get("date") <= g["to"]), None)
+            hit = next(
+                (g for g in digests if event.ok and g["from"] <= event.get("date") <= g["to"]), None
+            )
             if hit:
-                issues.append(Issue("warning", event.rel, f"digests（{hit['from']}〜{hit['to']}）に畳んだ期間のイベントログが残っている"))
+                issues.append(
+                    Issue(
+                        "warning",
+                        event.rel,
+                        f"digests（{hit['from']}〜{hit['to']}）に畳んだ期間のイベントログが残っている",
+                    )
+                )
 
     for doc in vault.of("contact"):
         for item in (doc.get("introduced") or []) if doc.ok else []:
             key = item.get("key")
             if key and key not in entity_keys | archived_keys:
-                issues.append(Issue("warning", doc.rel, f"introduced の key={key} のエンティティ・台帳エントリが無い"))
+                issues.append(
+                    Issue(
+                        "warning",
+                        doc.rel,
+                        f"introduced の key={key} のエンティティ・台帳エントリが無い",
+                    )
+                )
 
     live = {(d.scope, d.folder_key) for d in vault.of("entity")}
     for doc, entry in vault.archived_entries():
         if entry.get("key") and (doc.scope, entry["key"]) in live:
-            issues.append(Issue(
-                "error", doc.rel,
-                f"key={entry['key']} が台帳と entities/{entry['key']}/ の両方にある。再検討するなら台帳エントリを消す",
-            ))
+            issues.append(
+                Issue(
+                    "error",
+                    doc.rel,
+                    f"key={entry['key']} が台帳と entities/{entry['key']}/ の両方にある。再検討するなら台帳エントリを消す",
+                )
+            )
 
     for doc in vault.of("event"):
         if doc.scope is not None and doc.folder_key not in entity_keys:
-            issues.append(Issue("warning", doc.rel, f"同じフォルダに index.md が無い（{doc.folder_key}）"))
+            issues.append(
+                Issue("warning", doc.rel, f"同じフォルダに index.md が無い（{doc.folder_key}）")
+            )
 
     for doc in vault.of("note"):
         src = doc.get("source_file")
@@ -355,8 +415,16 @@ def _check_relations(vault: Vault, today: dt.date | None) -> list[Issue]:
         except (yaml.YAMLError, ValueError, OSError):
             continue
         synced = doc.get("source_updated_at")
-        if isinstance(src_updated, dt.date) and (not isinstance(synced, dt.date) or synced < src_updated):
-            issues.append(Issue("warning", doc.rel, f"派生元 {src}（updated_at={src_updated}）より古い。同期して source_updated_at を更新する"))
+        if isinstance(src_updated, dt.date) and (
+            not isinstance(synced, dt.date) or synced < src_updated
+        ):
+            issues.append(
+                Issue(
+                    "warning",
+                    doc.rel,
+                    f"派生元 {src}（updated_at={src_updated}）より古い。同期して source_updated_at を更新する",
+                )
+            )
     return issues
 
 
@@ -402,4 +470,3 @@ def configure_stdio() -> None:
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8")
-

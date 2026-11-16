@@ -17,14 +17,14 @@ superseded_by:
 
 ## 繰り返している誤り
 
-| パターン | 回数 | 例 → 直し |
-| --- | --- | --- |
-| 動詞を2つ重ねる | 1 | How much is it cost? → How much does it cost? |
-| `a` と `one` を重ねる | 1 | a one latte → a latte |
+| パターン              | 回数 | 例 → 直し                                     |
+| --------------------- | ---- | --------------------------------------------- |
+| 動詞を2つ重ねる       | 1    | How much is it cost? → How much does it cost? |
+| `a` と `one` を重ねる | 1    | a one latte → a latte                         |
 
 ## 定着させたい表現
 
-| 表現 | 例文 |
-| --- | --- |
-| Can I get ...? | Can I get a medium latte? |
-| for here / to go | For here, please. |
+| 表現             | 例文                      |
+| ---------------- | ------------------------- |
+| Can I get ...?   | Can I get a medium latte? |
+| for here / to go | For here, please.         |

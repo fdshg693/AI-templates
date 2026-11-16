@@ -15,12 +15,12 @@
    uv run tools/vault/check_entity.py --scope {scope} -s "{名称}"
    ```
 
-   | 判定 | すること |
-   | --- | --- |
-   | `[EXCLUDED]` | 過去の理由（台帳なら再検討の条件も）を示し、本人が再検討を指示しない限り調べ直さない |
-   | `[OTHER SCOPE]` | 別 scope の記録を参考として示し、この scope の条件で改めて判断する |
-   | `[EXISTING]` | 新しいフォルダは作らず、既存 `index.md` に `### 追記: YYYY-MM-DD` で足す |
-   | `[NOT FOUND]` | `_templates/entity.md` から `scopes/{scope}/entities/{key}/index.md` を作る |
+   | 判定            | すること                                                                             |
+   | --------------- | ------------------------------------------------------------------------------------ |
+   | `[EXCLUDED]`    | 過去の理由（台帳なら再検討の条件も）を示し、本人が再検討を指示しない限り調べ直さない |
+   | `[OTHER SCOPE]` | 別 scope の記録を参考として示し、この scope の条件で改めて判断する                   |
+   | `[EXISTING]`    | 新しいフォルダは作らず、既存 `index.md` に `### 追記: YYYY-MM-DD` で足す             |
+   | `[NOT FOUND]`   | `_templates/entity.md` から `scopes/{scope}/entities/{key}/index.md` を作る          |
 
 3. 公開情報だけで足切り条件（`criteria.md`）に当たったものはフォルダを作らず、`triage/{YYYY-MM-DD}_{topic}.md` にバッチ単位でまとめる。`entries` に名称を漏れなく書く（重複チェックが照合する）。
 

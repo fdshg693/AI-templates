@@ -164,21 +164,31 @@ class Vault:
         self.root = root
         self.sessions = [Doc(p, "sessions") for p in sorted((root / "sessions").rglob("*.md"))]
         self.outputs = {
-            folder: [Doc(p, folder) for p in sorted((root / folder).glob("*.md"))] for folder in OUTPUT_KINDS
+            folder: [Doc(p, folder) for p in sorted((root / folder).glob("*.md"))]
+            for folder in OUTPUT_KINDS
         }
         profile = root / "profile.md"
         self.profile = Doc(profile, "") if profile.exists() else None
         inbox = root / "inbox"
-        self.inbox = sorted(p for p in inbox.iterdir() if p.is_file() and not p.name.startswith(".")) if inbox.is_dir() else []
+        self.inbox = (
+            sorted(p for p in inbox.iterdir() if p.is_file() and not p.name.startswith("."))
+            if inbox.is_dir()
+            else []
+        )
 
     def session_map(self):
         return {d.stem: d for d in self.sessions}
 
     def unreviewed(self):
-        return sorted((d for d in self.sessions if d.get("status") != "reviewed"), key=lambda d: (d.get("date"), d.stem))
+        return sorted(
+            (d for d in self.sessions if d.get("status") != "reviewed"),
+            key=lambda d: (d.get("date"), d.stem),
+        )
 
     def latest_reviewed_date(self):
-        return max((d.get("date") for d in self.sessions if d.get("status") == "reviewed"), default="")
+        return max(
+            (d.get("date") for d in self.sessions if d.get("status") == "reviewed"), default=""
+        )
 
 
 def load_vault(root):
@@ -195,12 +205,18 @@ def expected_states(vault):
     for folder in ("digests", "suggestions"):
         docs = by_generated(vault.outputs[folder])
         for i, doc in enumerate(docs):
-            result[doc.path] = ("current", None) if i == len(docs) - 1 else ("superseded", docs[i + 1])
+            result[doc.path] = (
+                ("current", None) if i == len(docs) - 1 else ("superseded", docs[i + 1])
+            )
     digests = by_generated(vault.outputs["digests"])
     for doc in vault.outputs["feedback"]:
         succ = next(
-            (g for g in digests
-             if g.get("covers_through") >= doc.get("covers_through") and g.get("generated_at") >= doc.get("generated_at")),
+            (
+                g
+                for g in digests
+                if g.get("covers_through") >= doc.get("covers_through")
+                and g.get("generated_at") >= doc.get("generated_at")
+            ),
             None,
         )
         result[doc.path] = ("current", None) if succ is None else ("superseded", succ)
@@ -238,20 +254,34 @@ def render_index(vault):
         for doc in reversed(by_generated(vault.outputs[folder])):
             if states[doc.path][0] == "current":
                 link = rel_link(root, doc.path)
-                rows.append(f"| {label} | [{doc.stem}]({link}) | {doc.get('generated_at')} | {doc.get('covers_through')} |")
+                rows.append(
+                    f"| {label} | [{doc.stem}]({link}) | {doc.get('generated_at')} | {doc.get('covers_through')} |"
+                )
     if rows:
-        out += ["| 種類 | ファイル | 生成 | 反映済みのセッション |", "| --- | --- | --- | --- |", *rows]
+        out += [
+            "| 種類 | ファイル | 生成 | 反映済みのセッション |",
+            "| --- | --- | --- | --- |",
+            *rows,
+        ]
     else:
         out.append("まだ無い。")
     if unreviewed:
-        out += ["", f"> 未レビューのセッションが {len(unreviewed)} 件ある。上の出力には反映されていない。"]
+        out += [
+            "",
+            f"> 未レビューのセッションが {len(unreviewed)} 件ある。上の出力には反映されていない。",
+        ]
     out += ["", "## 未レビューのセッション", ""]
     if unreviewed:
         out += ["| 日付 | ファイル | タイトル |", "| --- | --- | --- |"]
         for doc in unreviewed[:INDEX_LIMIT]:
-            out.append(f"| {doc.get('date')} | [{doc.stem}]({rel_link(root, doc.path)}) | {doc.get('title')} |")
+            out.append(
+                f"| {doc.get('date')} | [{doc.stem}]({rel_link(root, doc.path)}) | {doc.get('title')} |"
+            )
         if len(unreviewed) > INDEX_LIMIT:
-            out += ["", f"ほか {len(unreviewed) - INDEX_LIMIT} 件（`practice.py pending` で一覧できる）。"]
+            out += [
+                "",
+                f"ほか {len(unreviewed) - INDEX_LIMIT} 件（`practice.py pending` で一覧できる）。",
+            ]
     else:
         out.append("なし。")
     counts = [
@@ -319,24 +349,41 @@ class Linter:
         feedback = {d.stem: d for d in self.vault.outputs["feedback"]}
         for doc in self.vault.sessions:
             if doc.fm is None:
-                self.error(doc.path, "frontmatter がない。inbox/ に置いて practice.py ingest で取り込む")
+                self.error(
+                    doc.path, "frontmatter がない。inbox/ に置いて practice.py ingest で取り込む"
+                )
                 continue
             if doc.stem in seen:
-                self.error(doc.path, f"ファイル名が {seen[doc.stem].path.as_posix()} と重複している")
+                self.error(
+                    doc.path, f"ファイル名が {seen[doc.stem].path.as_posix()} と重複している"
+                )
             seen[doc.stem] = doc
             match = DATED_NAME.match(doc.path.name)
             if not match:
                 self.error(doc.path, "ファイル名は YYYY-MM-DD-slug.md にする")
             if doc.get("type") != SESSION_TYPE:
-                self.error(doc.path, f"type は {SESSION_TYPE} にする（現在: {doc.get('type')!r}）", doc.line("type"))
+                self.error(
+                    doc.path,
+                    f"type は {SESSION_TYPE} にする（現在: {doc.get('type')!r}）",
+                    doc.line("type"),
+                )
             status = doc.get("status")
             if status not in SESSION_STATUSES:
-                self.error(doc.path, f"status は {' / '.join(sorted(SESSION_STATUSES))} のいずれか（現在: {status!r}）", doc.line("status"))
+                self.error(
+                    doc.path,
+                    f"status は {' / '.join(sorted(SESSION_STATUSES))} のいずれか（現在: {status!r}）",
+                    doc.line("status"),
+                )
             if self.check_date(doc, "date"):
                 date = doc.get("date")
                 if match and match.group(1) != date:
-                    self.error(doc.path, f"ファイル名の日付と date（{date}）が違う", doc.line("date"))
-                if doc.path.parent.name != date[:4] or doc.path.parent.parent != self.root / "sessions":
+                    self.error(
+                        doc.path, f"ファイル名の日付と date（{date}）が違う", doc.line("date")
+                    )
+                if (
+                    doc.path.parent.name != date[:4]
+                    or doc.path.parent.parent != self.root / "sessions"
+                ):
                     self.error(doc.path, f"sessions/{date[:4]}/ に置く")
             if not doc.get("title"):
                 self.error(doc.path, "title がない", doc.line("title"))
@@ -344,11 +391,21 @@ class Linter:
             if status == "reviewed":
                 fb = feedback.get(reviewed_in)
                 if fb is None:
-                    self.error(doc.path, f"reviewed なら reviewed_in に feedback/ のファイル名（拡張子なし）を書く（現在: {reviewed_in!r}）", doc.line("reviewed_in"))
+                    self.error(
+                        doc.path,
+                        f"reviewed なら reviewed_in に feedback/ のファイル名（拡張子なし）を書く（現在: {reviewed_in!r}）",
+                        doc.line("reviewed_in"),
+                    )
                 elif doc.stem not in (parse_list(fb.get("sessions")) or []):
-                    self.error(doc.path, f"reviewed_in の {reviewed_in} の sessions にこのセッションが無い", doc.line("reviewed_in"))
+                    self.error(
+                        doc.path,
+                        f"reviewed_in の {reviewed_in} の sessions にこのセッションが無い",
+                        doc.line("reviewed_in"),
+                    )
             elif status == "unreviewed" and reviewed_in:
-                self.error(doc.path, "unreviewed なら reviewed_in は空にする", doc.line("reviewed_in"))
+                self.error(
+                    doc.path, "unreviewed なら reviewed_in は空にする", doc.line("reviewed_in")
+                )
 
     def check_outputs(self):
         states = expected_states(self.vault)
@@ -360,14 +417,26 @@ class Linter:
                     continue
                 match = DATED_NAME.match(doc.path.name)
                 if not match:
-                    self.error(doc.path, "ファイル名は YYYY-MM-DD-slug.md（日付は generated_at）にする")
+                    self.error(
+                        doc.path, "ファイル名は YYYY-MM-DD-slug.md（日付は generated_at）にする"
+                    )
                 if doc.get("type") != type_:
-                    self.error(doc.path, f"type は {type_} にする（現在: {doc.get('type')!r}）", doc.line("type"))
+                    self.error(
+                        doc.path,
+                        f"type は {type_} にする（現在: {doc.get('type')!r}）",
+                        doc.line("type"),
+                    )
                 ok = self.check_date(doc, "generated_at") & self.check_date(doc, "covers_through")
                 if ok and doc.get("covers_through") > doc.get("generated_at"):
-                    self.error(doc.path, "covers_through が generated_at より後になっている", doc.line("covers_through"))
+                    self.error(
+                        doc.path,
+                        "covers_through が generated_at より後になっている",
+                        doc.line("covers_through"),
+                    )
                 if ok and match and match.group(1) != doc.get("generated_at"):
-                    self.error(doc.path, "ファイル名の日付と generated_at が違う", doc.line("generated_at"))
+                    self.error(
+                        doc.path, "ファイル名の日付と generated_at が違う", doc.line("generated_at")
+                    )
                 self.check_state(doc, *states[doc.path])
                 self.check_sections(doc, sections)
                 self.check_fill_marks(doc)
@@ -377,42 +446,73 @@ class Linter:
                     self.check_suggestions(doc)
         current = [d for d in self.vault.outputs["feedback"] if states[d.path][0] == "current"]
         if len(current) >= DIGEST_AFTER:
-            self.warn(self.root / "feedback", f"current な feedback が {len(current)} 件ある。guides/digesting.md に従ってまとめを作る")
+            self.warn(
+                self.root / "feedback",
+                f"current な feedback が {len(current)} 件ある。guides/digesting.md に従ってまとめを作る",
+            )
 
     def check_state(self, doc, status, succ):
         refresh = "practice.py refresh を実行する"
         if doc.get("status") not in OUTPUT_STATUSES:
-            self.error(doc.path, f"status は {' / '.join(sorted(OUTPUT_STATUSES))} のいずれか（現在: {doc.get('status')!r}）", doc.line("status"))
+            self.error(
+                doc.path,
+                f"status は {' / '.join(sorted(OUTPUT_STATUSES))} のいずれか（現在: {doc.get('status')!r}）",
+                doc.line("status"),
+            )
         elif doc.get("status") != status:
             self.error(doc.path, f"status は {status} になるはず。{refresh}", doc.line("status"))
         want = succ.stem if succ else ""
         if doc.get("superseded_by") != want:
-            self.error(doc.path, f"superseded_by は {want!r} になるはず。{refresh}", doc.line("superseded_by"))
+            self.error(
+                doc.path,
+                f"superseded_by は {want!r} になるはず。{refresh}",
+                doc.line("superseded_by"),
+            )
         i = banner_index(doc.lines)
         if i is None or doc.lines[i] != banner(self.vault, doc, status, succ):
-            self.error(doc.path, f"frontmatter 直後の状態バナーが古い・無い。{refresh}", (i or 0) + 1)
+            self.error(
+                doc.path, f"frontmatter 直後の状態バナーが古い・無い。{refresh}", (i or 0) + 1
+            )
 
     def check_feedback(self, doc, sessions):
         names = parse_list(doc.get("sessions"))
         if not names:
-            self.error(doc.path, "sessions に対象セッションのファイル名を [a, b] 形式で書く", doc.line("sessions"))
+            self.error(
+                doc.path,
+                "sessions に対象セッションのファイル名を [a, b] 形式で書く",
+                doc.line("sessions"),
+            )
             return
         if len(names) > MAX_SESSIONS_PER_FEEDBACK:
-            self.error(doc.path, f"1ファイルで扱うセッションは {MAX_SESSIONS_PER_FEEDBACK} 件まで（現在: {len(names)}）", doc.line("sessions"))
+            self.error(
+                doc.path,
+                f"1ファイルで扱うセッションは {MAX_SESSIONS_PER_FEEDBACK} 件まで（現在: {len(names)}）",
+                doc.line("sessions"),
+            )
         text = "\n".join(doc.lines)
         dates = []
         for name in names:
             session = sessions.get(name)
             if session is None:
-                self.error(doc.path, f"sessions の {name} が sessions/ に無い", doc.line("sessions"))
+                self.error(
+                    doc.path, f"sessions の {name} が sessions/ に無い", doc.line("sessions")
+                )
                 continue
             dates.append(session.get("date"))
             if session.get("status") != "reviewed" or session.get("reviewed_in") != doc.stem:
-                self.error(session.path, f"{doc.stem} がこのセッションを扱っている。status: reviewed、reviewed_in: {doc.stem} にする", session.line("status"))
+                self.error(
+                    session.path,
+                    f"{doc.stem} がこのセッションを扱っている。status: reviewed、reviewed_in: {doc.stem} にする",
+                    session.line("status"),
+                )
             if f"{name}.md)" not in text:
                 self.error(doc.path, f"本文から {name} へのリンクが無い（指摘の根拠を示す）")
         if dates and doc.get("covers_through") != max(dates):
-            self.error(doc.path, f"covers_through は対象セッションの最新の日付 {max(dates)} にする", doc.line("covers_through"))
+            self.error(
+                doc.path,
+                f"covers_through は対象セッションの最新の日付 {max(dates)} にする",
+                doc.line("covers_through"),
+            )
 
     def check_suggestions(self, doc):
         count, inside = 0, False
@@ -422,7 +522,9 @@ class Linter:
             elif level == 3 and inside:
                 count += 1
         if count < MIN_SUGGESTIONS:
-            self.error(doc.path, f"'## 提案' に ### の題材を {MIN_SUGGESTIONS} つ以上書く（現在: {count}）")
+            self.error(
+                doc.path, f"'## 提案' に ### の題材を {MIN_SUGGESTIONS} つ以上書く（現在: {count}）"
+            )
 
     def check_profile(self):
         doc = self.vault.profile
@@ -432,13 +534,25 @@ class Linter:
             self.error(doc.path, "frontmatter がない")
             return
         if doc.get("type") != PROFILE_TYPE:
-            self.error(doc.path, f"type は {PROFILE_TYPE} にする（現在: {doc.get('type')!r}）", doc.line("type"))
+            self.error(
+                doc.path,
+                f"type は {PROFILE_TYPE} にする（現在: {doc.get('type')!r}）",
+                doc.line("type"),
+            )
         self.check_date(doc, "updated_at")
         if doc.get("covers_through") and not DATE.match(doc.get("covers_through")):
-            self.error(doc.path, "covers_through は YYYY-MM-DD にする（未レビューなら空）", doc.line("covers_through"))
+            self.error(
+                doc.path,
+                "covers_through は YYYY-MM-DD にする（未レビューなら空）",
+                doc.line("covers_through"),
+            )
         latest = self.vault.latest_reviewed_date()
         if latest and doc.get("covers_through") < latest:
-            self.error(doc.path, f"{latest} のセッションまでレビュー済みなのに covers_through が古い。guides/reviewing.md の手順で更新する", doc.line("covers_through"))
+            self.error(
+                doc.path,
+                f"{latest} のセッションまでレビュー済みなのに covers_through が古い。guides/reviewing.md の手順で更新する",
+                doc.line("covers_through"),
+            )
         self.check_sections(doc, PROFILE_SECTIONS)
         self.check_fill_marks(doc)
 
@@ -457,7 +571,11 @@ class Linter:
                         continue
                     dest = (path.parent / target.split("#", 1)[0]).resolve()
                     if self.examples and not dest.is_relative_to(self.root.resolve()):
-                        self.error(path, f"フォルダ外へのリンク（記入例はコピー先に無いものを指せない）: {target}", i)
+                        self.error(
+                            path,
+                            f"フォルダ外へのリンク（記入例はコピー先に無いものを指せない）: {target}",
+                            i,
+                        )
                     elif not dest.exists():
                         self.error(path, f"リンク切れ: {target}", i)
 
@@ -468,7 +586,9 @@ class Linter:
             if not (self.root / name).exists():
                 self.error(self.root / name, "必須ファイルがない")
         for path in self.vault.inbox:
-            self.warn(path, "inbox/ に取り込み前のファイルがある。guides/ingesting.md に従って取り込む")
+            self.warn(
+                path, "inbox/ に取り込み前のファイルがある。guides/ingesting.md に従って取り込む"
+            )
         self.check_sessions()
         self.check_outputs()
         self.check_profile()
@@ -477,8 +597,14 @@ class Linter:
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("root", type=Path, help="検査するフォルダ（導入先の practice-review/、または --examples で references/）")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "root",
+        type=Path,
+        help="検査するフォルダ（導入先の practice-review/、または --examples で references/）",
+    )
     parser.add_argument("--examples", action="store_true", help="テンプレートの記入例を検査する")
     parser.add_argument("--strict", action="store_true", help="警告もエラー扱いにする")
     args = parser.parse_args()

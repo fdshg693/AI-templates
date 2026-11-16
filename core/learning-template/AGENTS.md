@@ -6,13 +6,13 @@
 
 ### 場面別の参照先
 
-| 場面                                                     | 読む場所                                                                 |
-| -------------------------------------------------------- | ------------------------------------------------------------------------ |
-| 原則（なぜこう分けるか）を確認・変更する                 | [guides/01-philosophy.md](guides/01-philosophy.md)                         |
-| トップフォルダのパターンを追加・変更する                 | [guides/02-layout.md](guides/02-layout.md) の表と、そこからリンクされた `references/` 配下 |
-| AI向け指示ファイル（AGENTS.md）の書き方を変更する        | [guides/03-agent-instructions.md](guides/03-agent-instructions.md)         |
-| 移植手順・プレースホルダ一覧を変更する                   | [guides/04-adapting.md](guides/04-adapting.md)                             |
-| 新しい学習リポジトリへの導入を手伝う                     | [guides/04-adapting.md](guides/04-adapting.md)                             |
+| 場面                                              | 読む場所                                                                                   |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| 原則（なぜこう分けるか）を確認・変更する          | [guides/01-philosophy.md](guides/01-philosophy.md)                                         |
+| トップフォルダのパターンを追加・変更する          | [guides/02-layout.md](guides/02-layout.md) の表と、そこからリンクされた `references/` 配下 |
+| AI向け指示ファイル（AGENTS.md）の書き方を変更する | [guides/03-agent-instructions.md](guides/03-agent-instructions.md)                         |
+| 移植手順・プレースホルダ一覧を変更する            | [guides/04-adapting.md](guides/04-adapting.md)                                             |
+| 新しい学習リポジトリへの導入を手伝う              | [guides/04-adapting.md](guides/04-adapting.md)                                             |
 
 ### 編集時のルール
 
@@ -27,4 +27,5 @@
   uv run lint_learning_repo.py --allow-placeholders references
   uv run lint_learning_repo.py --allow-placeholders .
   ```
+
 - このフォルダでテンプレートを使った実作業（実際の学習リポジトリ作り）はしない。試すときは別の場所にコピーする。

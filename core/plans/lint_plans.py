@@ -45,9 +45,24 @@ PLAN_STATUSES = {
 ROUGH_STATUSES = {"drafting", "ready-for-plan", "promoted", "abandoned"}
 SKIP_DIRS = {"guides", "references", "snapshot", "progress", "rough"}
 # Required `##` headings, matched by prefix. Source of truth: guides/plan-writing.md「節構成」.
-IMPLEMENTATION_SECTIONS = ("やること", "読むべきファイル", "触るファイル", "決定事項", "ルール更新ポイント", "進め方")
+IMPLEMENTATION_SECTIONS = (
+    "やること",
+    "読むべきファイル",
+    "触るファイル",
+    "決定事項",
+    "ルール更新ポイント",
+    "進め方",
+)
 REQUIRED_SECTIONS = {
-    "overview": ("実装ステータス", "要件", "実装ステップ", "主要な決定事項", "変更/新規ファイル一覧", "ルール更新ポイント", "進め方"),
+    "overview": (
+        "実装ステータス",
+        "要件",
+        "実装ステップ",
+        "主要な決定事項",
+        "変更/新規ファイル一覧",
+        "ルール更新ポイント",
+        "進め方",
+    ),
     "implementation": IMPLEMENTATION_SECTIONS,
     "research": ("やること", "調査観点", "調査結果", "進め方"),
     "single": IMPLEMENTATION_SECTIONS,
@@ -133,13 +148,19 @@ class Linter:
         if fm is None:
             return None
         if fm.get("type") != expected_type:
-            self.error(path, f"type は '{expected_type}' であるべき（現在: {fm.get('type')!r}）", fm.line("type"))
+            self.error(
+                path,
+                f"type は '{expected_type}' であるべき（現在: {fm.get('type')!r}）",
+                fm.line("type"),
+            )
         if fm.get("status") not in PLAN_STATUSES:
             self.error(path, f"status が不正: {fm.get('status')!r}", fm.line("status"))
         if expected_type == "Plan Step":
             for key in ("order", "depends_on", "blocks"):
                 if key in fm:
-                    self.error(path, f"Plan Step に `{key}` は書かない（overview のみ）", fm.line(key))
+                    self.error(
+                        path, f"Plan Step に `{key}` は書かない（overview のみ）", fm.line(key)
+                    )
         return fm
 
     def lint_rough(self, path):
@@ -147,7 +168,11 @@ class Linter:
         if fm is None:
             return
         if fm.get("type") != "Rough Plan":
-            self.error(path, f"type は 'Rough Plan' であるべき（現在: {fm.get('type')!r}）", fm.line("type"))
+            self.error(
+                path,
+                f"type は 'Rough Plan' であるべき（現在: {fm.get('type')!r}）",
+                fm.line("type"),
+            )
         if fm.get("status") not in ROUGH_STATUSES:
             self.error(path, f"rough の status が不正: {fm.get('status')!r}", fm.line("status"))
 
@@ -160,7 +185,12 @@ class Linter:
                 continue
             label = box.group(2)
             link = LINK_TARGET.search(label)
-            yield lineno, box.group(1).lower() == "x", label, Path(link.group(1)).name if link else None
+            yield (
+                lineno,
+                box.group(1).lower() == "x",
+                label,
+                Path(link.group(1)).name if link else None,
+            )
 
     def lint_checkboxes(self, overview, step_fms):
         """step_fms: {step file name: frontmatter}"""
@@ -237,11 +267,21 @@ class Linter:
             self.lint_sections(overview, fm, "overview")
             self.lint_checkboxes(overview, step_fms)
             status = fm.get("status", "")
-            if status.startswith("implementing-") and not self.examples and not (folder / "snapshot").is_dir():
-                self.error(overview, "実行着手後（implementing-*）だが snapshot/ が無い", fm.line("status"))
+            if (
+                status.startswith("implementing-")
+                and not self.examples
+                and not (folder / "snapshot").is_dir()
+            ):
+                self.error(
+                    overview, "実行着手後（implementing-*）だが snapshot/ が無い", fm.line("status")
+                )
             if status == "implementing-done":
                 if any(s.get("status") != "implementing-done" for s in step_fms.values()):
-                    self.error(overview, "overview が implementing-done だが未完了のステップがある", fm.line("status"))
+                    self.error(
+                        overview,
+                        "overview が implementing-done だが未完了のステップがある",
+                        fm.line("status"),
+                    )
                 if not self.has_completion_record(folder / "progress"):
                     self.error(
                         overview,
@@ -262,7 +302,11 @@ class Linter:
             blocks = as_list(fm.get("blocks"))
             order = str(fm.get("order", ""))
             if (deps or blocks) and not re.match(r"^\d+/\d+$", order):
-                self.error(path, "依存関係があるプランには `order: N/M` が必須", fm.line("order") if order else 1)
+                self.error(
+                    path,
+                    "依存関係があるプランには `order: N/M` が必須",
+                    fm.line("order") if order else 1,
+                )
             elif order:
                 if not re.match(r"^\d+/\d+$", order):
                     self.error(path, f"order の書式が不正: {order}", fm.line("order"))
@@ -281,9 +325,16 @@ class Linter:
                         report = self.warn if self.examples and not target.exists() else self.error
                         report(path, f"{key} の参照先が見つからない/lint対象外: {item}", line)
                     else:
-                        back = [(target.parent / b).resolve() for b in as_list(plans[target].get(back_key))]
+                        back = [
+                            (target.parent / b).resolve()
+                            for b in as_list(plans[target].get(back_key))
+                        ]
                         if path not in back:
-                            self.error(path, f"{key} {item} に対応する {back_key} が相手側に無い（片側宣言）", line)
+                            self.error(
+                                path,
+                                f"{key} {item} に対応する {back_key} が相手側に無い（片側宣言）",
+                                line,
+                            )
             graph[path] = {(path.parent / d).resolve() for d in deps}
 
         visiting, done = set(), set()
@@ -331,10 +382,14 @@ class Linter:
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("plans_dir", type=Path, help="プランを置くルート（例: plans）")
     parser.add_argument("--strict", action="store_true", help="警告でも失敗扱いにする")
-    parser.add_argument("--examples", action="store_true", help="テンプレートのサンプル（references/）を検査する")
+    parser.add_argument(
+        "--examples", action="store_true", help="テンプレートのサンプル（references/）を検査する"
+    )
     args = parser.parse_args()
     if not args.plans_dir.is_dir():
         print(f"error: not a directory: {args.plans_dir}", file=sys.stderr)
@@ -345,7 +400,9 @@ def main():
         print(f"warn : {line}")
     for line in linter.errors:
         print(f"error: {line}")
-    print(f"checked {count} plan(s): {len(linter.errors)} error(s), {len(linter.warnings)} warning(s)")
+    print(
+        f"checked {count} plan(s): {len(linter.errors)} error(s), {len(linter.warnings)} warning(s)"
+    )
     return 1 if linter.errors or (args.strict and linter.warnings) else 0
 
 

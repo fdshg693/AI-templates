@@ -4,10 +4,10 @@
 
 新規プランを**書く前**にも、既存プランを**読み込んで実装を進める前**にも、場面に応じて以下を参照する。
 
-| 場面             | 参照先                                                                     |
-| ---------------- | -------------------------------------------------------------------------- |
-| ラフプラン作成時 | [guides/rough-plan.md](guides/rough-plan.md)         |
-| プラン作成時     | [guides/plan-writing.md](guides/plan-writing.md)     |
+| 場面             | 参照先                                                                                         |
+| ---------------- | ---------------------------------------------------------------------------------------------- |
+| ラフプラン作成時 | [guides/rough-plan.md](guides/rough-plan.md)                                                   |
+| プラン作成時     | [guides/plan-writing.md](guides/plan-writing.md)                                               |
 | プラン実行時     | [guides/plan-execution.md](guides/plan-execution.md)、[guides/progress.md](guides/progress.md) |
 
 ## 不変条件
@@ -28,13 +28,13 @@
 
 `references/` は導入先の `plans/` と同じ構造で、複数ステップのプラン1つ（`postal-code-autofill/`）と単一ファイル完結プラン1つ（`tag-popularity-sort.md`）を置いている。
 
-| 書くもの                      | サンプル                                                                                                                                                                                                                         |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 複数ステップの概要            | [references/postal-code-autofill/00-overview.md](references/postal-code-autofill/00-overview.md)                                                                                                                                 |
-| 調査ステップ                  | [references/postal-code-autofill/01-research-zipcloud-api.md](references/postal-code-autofill/01-research-zipcloud-api.md)                                                                                                       |
-| 実装ステップ                  | [references/postal-code-autofill/02-api-client-and-form.md](references/postal-code-autofill/02-api-client-and-form.md)                                                                                                           |
-| 1ファイルで完結する小さい機能 | [references/tag-popularity-sort.md](references/tag-popularity-sort.md)（末尾に完了記録）                                                                                                                                         |
-| ラフプラン                    | [references/postal-code-autofill/rough/01-initial-idea.md](references/postal-code-autofill/rough/01-initial-idea.md)                                                                                                             |
+| 書くもの                      | サンプル                                                                                                                                                                                                                     |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 複数ステップの概要            | [references/postal-code-autofill/00-overview.md](references/postal-code-autofill/00-overview.md)                                                                                                                             |
+| 調査ステップ                  | [references/postal-code-autofill/01-research-zipcloud-api.md](references/postal-code-autofill/01-research-zipcloud-api.md)                                                                                                   |
+| 実装ステップ                  | [references/postal-code-autofill/02-api-client-and-form.md](references/postal-code-autofill/02-api-client-and-form.md)                                                                                                       |
+| 1ファイルで完結する小さい機能 | [references/tag-popularity-sort.md](references/tag-popularity-sort.md)（末尾に完了記録）                                                                                                                                     |
+| ラフプラン                    | [references/postal-code-autofill/rough/01-initial-idea.md](references/postal-code-autofill/rough/01-initial-idea.md)                                                                                                         |
 | progress（進捗・完了記録）    | [guides/progress.md](guides/progress.md)（棲み分け）、[調査結果](references/postal-code-autofill/progress/01-research-results.md)、[実装メモ・完了記録](references/postal-code-autofill/progress/02-implementation-notes.md) |
 
 サンプルには `snapshot/` を置いていない（初版の逐語コピーなので、中身は親フォルダのプランと同じ形になる）。

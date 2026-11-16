@@ -24,9 +24,16 @@ from vaultlib import ROOT, configure_stdio, emit_paths, load_vault, log
 def main() -> int:
     configure_stdio()
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--root", type=Path, default=ROOT, help="vault/ を含むディレクトリ（既定: リポジトリルート）")
+    p.add_argument(
+        "--root",
+        type=Path,
+        default=ROOT,
+        help="vault/ を含むディレクトリ（既定: リポジトリルート）",
+    )
     p.add_argument("--strict", action="store_true", help="警告も失敗扱いにする")
-    p.add_argument("--today", type=dt.date.fromisoformat, default=dt.date.today(), help="期限切れ判定の基準日")
+    p.add_argument(
+        "--today", type=dt.date.fromisoformat, default=dt.date.today(), help="期限切れ判定の基準日"
+    )
     p.add_argument("-s", "--summary", action="store_true", help="人間向けの一覧を stderr に出す")
     args = p.parse_args()
 
@@ -37,7 +44,9 @@ def main() -> int:
     for i in warnings:
         log(f"[warn]  {i}")
     if args.summary:
-        log(f"\n{len(vault.docs)} ファイルを検証: エラー {len(errors)} 件 / 警告 {len(warnings)} 件")
+        log(
+            f"\n{len(vault.docs)} ファイルを検証: エラー {len(errors)} 件 / 警告 {len(warnings)} 件"
+        )
     emit_paths([i.path for i in vault.issues])
     return 1 if errors or (args.strict and warnings) else 0
 

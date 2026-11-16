@@ -27,23 +27,23 @@
 
 種別と配置パス（glob）の対応の正本は `schema.py` の `KINDS`。下表はその要約。
 
-| 種別 | 配置 | 役割 | サンプル |
-| --- | --- | --- | --- |
-| entity | `scopes/{scope}/entities/{key}/index.md` | 1対象の最新の要約・調査・結論 | [acme-notes/index.md](../references/vault/scopes/work/entities/acme-notes/index.md) |
-| event | `entities/{key}/{YYYY-MM-DD}_{kind}.md`、`contacts/{key}/{YYYY-MM-DD}_{kind}.md` | 1回の出来事の一次情報 | [2026-10-05_trial.md](../references/vault/scopes/work/entities/acme-notes/2026-10-05_trial.md) |
-| contact | `contacts/{key}/index.md` | 情報をくれる人・経路の評価と、紹介された対象の一覧 | [vendor_sato-hanako](../references/vault/contacts/vendor_sato-hanako/index.md) |
-| triage | `scopes/{scope}/triage/{YYYY-MM-DD}_{topic}.md` | 一次スクリーニングで打ち切った対象をバッチ単位で1ファイル | [2026-09-20_note-apps.md](../references/vault/scopes/work/triage/2026-09-20_note-apps.md) |
-| archive | `scopes/{scope}/archive.md` | 終了した対象の台帳（1件数行） | [archive.md](../references/vault/scopes/work/archive.md) |
-| dashboard | `scopes/{scope}/dashboard.md` | 一覧（自動生成）＋手書きのフェーズ・メモ | [dashboard.md](../references/vault/scopes/work/dashboard.md) |
-| note | `profile/**`、`scopes/*/README.md`、`scopes/*/criteria.md` | 判断軸・条件など。`visibility` 必須 | [preferences.md](../references/vault/profile/preferences.md) |
+| 種別      | 配置                                                                             | 役割                                                      | サンプル                                                                                       |
+| --------- | -------------------------------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| entity    | `scopes/{scope}/entities/{key}/index.md`                                         | 1対象の最新の要約・調査・結論                             | [acme-notes/index.md](../references/vault/scopes/work/entities/acme-notes/index.md)            |
+| event     | `entities/{key}/{YYYY-MM-DD}_{kind}.md`、`contacts/{key}/{YYYY-MM-DD}_{kind}.md` | 1回の出来事の一次情報                                     | [2026-10-05_trial.md](../references/vault/scopes/work/entities/acme-notes/2026-10-05_trial.md) |
+| contact   | `contacts/{key}/index.md`                                                        | 情報をくれる人・経路の評価と、紹介された対象の一覧        | [vendor_sato-hanako](../references/vault/contacts/vendor_sato-hanako/index.md)                 |
+| triage    | `scopes/{scope}/triage/{YYYY-MM-DD}_{topic}.md`                                  | 一次スクリーニングで打ち切った対象をバッチ単位で1ファイル | [2026-09-20_note-apps.md](../references/vault/scopes/work/triage/2026-09-20_note-apps.md)      |
+| archive   | `scopes/{scope}/archive.md`                                                      | 終了した対象の台帳（1件数行）                             | [archive.md](../references/vault/scopes/work/archive.md)                                       |
+| dashboard | `scopes/{scope}/dashboard.md`                                                    | 一覧（自動生成）＋手書きのフェーズ・メモ                  | [dashboard.md](../references/vault/scopes/work/dashboard.md)                                   |
+| note      | `profile/**`、`scopes/*/README.md`、`scopes/*/criteria.md`                       | 判断軸・条件など。`visibility` 必須                       | [preferences.md](../references/vault/profile/preferences.md)                                   |
 
 ## 三層構造（一覧 → 要約 → 一次情報）
 
-| 層 | ファイル | 粒度 | 誰が更新するか |
-| --- | --- | --- | --- |
-| 一覧 | `dashboard.md` | 全対象を1行ずつ。要対応・予定・待ちを先頭に | 生成区間は CLI、外は手書き |
-| 要約 | `entities/{key}/index.md` | 1対象の最新状態と結論 | AI（frontmatter と結論は常に最新に書き換え、経緯は追記） |
-| 一次情報 | `{YYYY-MM-DD}_{kind}.md` | 1回の出来事の生メモ | AI（その回だけ。後から書き換えない） |
+| 層       | ファイル                  | 粒度                                        | 誰が更新するか                                           |
+| -------- | ------------------------- | ------------------------------------------- | -------------------------------------------------------- |
+| 一覧     | `dashboard.md`            | 全対象を1行ずつ。要対応・予定・待ちを先頭に | 生成区間は CLI、外は手書き                               |
+| 要約     | `entities/{key}/index.md` | 1対象の最新状態と結論                       | AI（frontmatter と結論は常に最新に書き換え、経緯は追記） |
+| 一次情報 | `{YYYY-MM-DD}_{kind}.md`  | 1回の出来事の生メモ                         | AI（その回だけ。後から書き換えない）                     |
 
 上の層ほど短く、常に最新。下の層ほど詳しく、書いた時点のまま。何かを知りたいときは上から順に降りていけば、必要以上のファイルを開かずに済む。
 
@@ -62,12 +62,12 @@
 
 ## profile（scope 共通）と scope 固有の振り分け
 
-| 情報 | 置き場所 |
-| --- | --- |
-| scope に依存しない判断軸・好み | `profile/preferences.md` |
-| scope 固有の必須条件・予算・NG | `scopes/{scope}/criteria.md` |
-| 判断の背景にある本音（外に出さない） | `profile/internal/` |
-| 派生（翻訳・要約）版 | `profile/en/` など。`source_file` / `source_updated_at` を持たせる |
+| 情報                                 | 置き場所                                                           |
+| ------------------------------------ | ------------------------------------------------------------------ |
+| scope に依存しない判断軸・好み       | `profile/preferences.md`                                           |
+| scope 固有の必須条件・予算・NG       | `scopes/{scope}/criteria.md`                                       |
+| 判断の背景にある本音（外に出さない） | `profile/internal/`                                                |
+| 派生（翻訳・要約）版                 | `profile/en/` など。`source_file` / `source_updated_at` を持たせる |
 
 迷う記述は scope 側に置く。共通部に誤って入れると、別 scope の判断をその条件で縛ってしまう。
 

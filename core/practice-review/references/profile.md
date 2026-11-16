@@ -20,11 +20,11 @@ covers_through: 2026-10-12
 
 ## 繰り返している誤り
 
-| パターン | 回数 | 最後に出た | 例 → 直し |
-| --- | --- | --- | --- |
-| 動名詞をとる語の後ろに to 不定詞 | 2 | 2026-10-12 | good at to communicate → good at communicating |
-| 動詞・冠詞の重ね | 2 | 2026-10-05 | How much is it cost? → How much does it cost? |
-| 期間の `for` と起点の `since` の混同 | 1 | 2026-10-12 | since 5 years → for five years |
+| パターン                             | 回数 | 最後に出た | 例 → 直し                                      |
+| ------------------------------------ | ---- | ---------- | ---------------------------------------------- |
+| 動名詞をとる語の後ろに to 不定詞     | 2    | 2026-10-12 | good at to communicate → good at communicating |
+| 動詞・冠詞の重ね                     | 2    | 2026-10-05 | How much is it cost? → How much does it cost?  |
+| 期間の `for` と起点の `since` の混同 | 1    | 2026-10-12 | since 5 years → for five years                 |
 
 ## 定着した表現
 

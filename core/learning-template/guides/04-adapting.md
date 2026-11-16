@@ -27,16 +27,16 @@
 
 ## `references/` とコピー先の対応
 
-| `references/` 内のパス | コピー先のパス | 役割 |
-|---|---|---|
-| [`AGENTS.md`](../references/AGENTS.md) / `CLAUDE.md` / [`README.md`](../references/README.md) | `/AGENTS.md` / `/CLAUDE.md` / `/README.md` | リポジトリ全体のルールと索引（必須） |
-| [`study/AGENTS.md`](../references/study/AGENTS.md) | `study/AGENTS.md` | テーマ一覧・ユーザーの理解度 |
-| [`study/{topic}/`](../references/study/{topic}/AGENTS.md) | `study/<テーマ名>/` | テーマの現状まとめ（`AGENTS.md`）とロードマップ（`PLAN.md`） |
-| [`study/{topic}/{project}/`](../references/study/{topic}/{project}/README.md) | `study/<テーマ名>/<プロジェクト名>/` | 1プロジェクト分のファイル一式 |
-| [`reading/`](../references/reading/AGENTS.md) | `reading/`（`{topic}` はリネーム） | 座学（任意） |
-| [`sandbox/`](../references/sandbox/AGENTS.md) | `sandbox/` | ローカル検証（任意）。中身は `study/` と同じ構成で作る |
-| [`build/`](../references/build/AGENTS.md) | `build/`（`{project}` はリネーム） | 本格プロジェクト（任意） |
-| [`cheatsheet/`](../references/cheatsheet/AGENTS.md) | `cheatsheet/` | 操作リファレンス（任意） |
+| `references/` 内のパス                                                                        | コピー先のパス                             | 役割                                                         |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+| [`AGENTS.md`](../references/AGENTS.md) / `CLAUDE.md` / [`README.md`](../references/README.md) | `/AGENTS.md` / `/CLAUDE.md` / `/README.md` | リポジトリ全体のルールと索引（必須）                         |
+| [`study/AGENTS.md`](../references/study/AGENTS.md)                                            | `study/AGENTS.md`                          | テーマ一覧・ユーザーの理解度                                 |
+| [`study/{topic}/`](../references/study/{topic}/AGENTS.md)                                     | `study/<テーマ名>/`                        | テーマの現状まとめ（`AGENTS.md`）とロードマップ（`PLAN.md`） |
+| [`study/{topic}/{project}/`](../references/study/{topic}/{project}/README.md)                 | `study/<テーマ名>/<プロジェクト名>/`       | 1プロジェクト分のファイル一式                                |
+| [`reading/`](../references/reading/AGENTS.md)                                                 | `reading/`（`{topic}` はリネーム）         | 座学（任意）                                                 |
+| [`sandbox/`](../references/sandbox/AGENTS.md)                                                 | `sandbox/`                                 | ローカル検証（任意）。中身は `study/` と同じ構成で作る       |
+| [`build/`](../references/build/AGENTS.md)                                                     | `build/`（`{project}` はリネーム）         | 本格プロジェクト（任意）                                     |
+| [`cheatsheet/`](../references/cheatsheet/AGENTS.md)                                           | `cheatsheet/`                              | 操作リファレンス（任意）                                     |
 
 ## 置き換えるべきプレースホルダ
 
@@ -46,14 +46,14 @@
   1つでも残っていると検査スクリプトがエラーにする。
 - **`（…）`（記入欄）** — 本文に書く内容の説明。実際の内容に置き換えるか、未着手のまま残してよい。
 
-| プレースホルダ | 意味 | 置き換え例 |
-|---|---|---|
-| `{domain}` | 学習対象の分野名（リポジトリ全体のテーマ） | `Azure`, `Rust`, `料理`, `ピアノ` |
-| `{topic}` | ドメイン内の1テーマ | `auth`, `並行処理`, `発酵` |
-| `{project}` | 1トピック内の1ステップ（`build/` では1つの成果物） | `simple`, `01-basic`, `02-advanced` |
-| `{tool}` | ツール名（ルール内では IaC・ビルドツール、`cheatsheet/` ではツール別フォルダ名） | `bicep`, `terraform`, `docker` |
-| `{concept}` | `reading/` の観点ファイル名（`overview/01-{concept}.md`） | `01-token-flow`, `01-基本用語` |
-| `{question}` | `questions/` の質問ファイル名 | `why-refresh-token`, `ロックの粒度` |
+| プレースホルダ | 意味                                                                             | 置き換え例                          |
+| -------------- | -------------------------------------------------------------------------------- | ----------------------------------- |
+| `{domain}`     | 学習対象の分野名（リポジトリ全体のテーマ）                                       | `Azure`, `Rust`, `料理`, `ピアノ`   |
+| `{topic}`      | ドメイン内の1テーマ                                                              | `auth`, `並行処理`, `発酵`          |
+| `{project}`    | 1トピック内の1ステップ（`build/` では1つの成果物）                               | `simple`, `01-basic`, `02-advanced` |
+| `{tool}`       | ツール名（ルール内では IaC・ビルドツール、`cheatsheet/` ではツール別フォルダ名） | `bicep`, `terraform`, `docker`      |
+| `{concept}`    | `reading/` の観点ファイル名（`overview/01-{concept}.md`）                        | `01-token-flow`, `01-基本用語`      |
+| `{question}`   | `questions/` の質問ファイル名                                                    | `why-refresh-token`, `ロックの粒度` |
 
 トップフォルダ名（`study/`, `reading/`, `sandbox/`, `build/`, `cheatsheet/`）は好きな名前に変えてよい
 （[02-layout.md](./02-layout.md) 参照）。変えた場合は、ルートの `README.md` / `AGENTS.md` 内の記述も合わせる。

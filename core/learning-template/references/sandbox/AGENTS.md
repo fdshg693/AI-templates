@@ -3,11 +3,11 @@
 ## 構成
 
 - `sandbox/`
-    - ローカル検証プロジェクトまとめ
+  - ローカル検証プロジェクトまとめ
 - `sandbox/{topic}`
-    - 各テーマ配下の検証プロジェクトまとめ
+  - 各テーマ配下の検証プロジェクトまとめ
 - `sandbox/{topic}/{project}`
-    - 各プロジェクトの検証用フォルダ
+  - 各プロジェクトの検証用フォルダ
 
 `sandbox/{topic}` 配下のファイル構成（`AGENTS.md`／`HISTORY.md`／`PLAN.md` の役割分担）は、
 ルートの [AGENTS.md](../AGENTS.md) の「ドキュメント管理」にある `study/{topic}/` と同じルールに従う。

@@ -4,12 +4,12 @@
 
 作業を始める前に、場面に対応するファイルを読む。
 
-| 場面 | 読む場所 |
-| ---- | -------- |
-| 複数プランにまたがる作業を始める・スレッドを立てるか決める | [guides/thread-writing.md](guides/thread-writing.md)（書式の正本） |
-| 所属プランの実行中に、事実の発覚・仕様変更・手戻り・プランの追加・順序変更が起きた | [guides/thread-updating.md](guides/thread-updating.md) |
-| 所属プランがすべて完了した・作業をやめる（`closed` / `abandoned`） | [guides/thread-closing.md](guides/thread-closing.md) |
-| プランを書く・実行する（スレッドに所属するかどうかによらない） | [planning/AGENTS.md](planning/AGENTS.md) の場面表 |
+| 場面                                                                               | 読む場所                                                           |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 複数プランにまたがる作業を始める・スレッドを立てるか決める                         | [guides/thread-writing.md](guides/thread-writing.md)（書式の正本） |
+| 所属プランの実行中に、事実の発覚・仕様変更・手戻り・プランの追加・順序変更が起きた | [guides/thread-updating.md](guides/thread-updating.md)             |
+| 所属プランがすべて完了した・作業をやめる（`closed` / `abandoned`）                 | [guides/thread-closing.md](guides/thread-closing.md)               |
+| プランを書く・実行する（スレッドに所属するかどうかによらない）                     | [planning/AGENTS.md](planning/AGENTS.md) の場面表                  |
 
 `planning/` は plans テンプレートをそのまま置いたもの。plans のガイドとコマンドに出てくる `plans/` は `threads/planning/` と読み替える（例: `uv run threads/planning/snapshot_plan.py threads/planning/{plan-name}`）。
 
@@ -32,12 +32,12 @@
 
 書こうとしているファイルに対応するサンプルだけを読み、書式と粒度をそろえる。`references/` は導入先の `threads/` と同じ構造。
 
-| 書くもの | サンプル |
-| -------- | -------- |
-| `00-thread.md`（`plans:`・`プラン一覧`・`（未作成）` 行） | [references/topics/article-scheduled-publishing/00-thread.md](references/topics/article-scheduled-publishing/00-thread.md) |
-| `log.md` のエントリ（計画・発見・仕様変更・手戻り・順序変更） | [references/topics/article-scheduled-publishing/log.md](references/topics/article-scheduled-publishing/log.md) |
-| 所属プラン（フォルダ方式。完了済みだが `open` の間は残す） | [references/planning/article-publish-state/00-overview.md](references/planning/article-publish-state/00-overview.md) |
-| 手戻りで追加した所属プラン（単一ファイル完結） | [references/planning/publish-at-utc.md](references/planning/publish-at-utc.md) |
+| 書くもの                                                      | サンプル                                                                                                                   |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `00-thread.md`（`plans:`・`プラン一覧`・`（未作成）` 行）     | [references/topics/article-scheduled-publishing/00-thread.md](references/topics/article-scheduled-publishing/00-thread.md) |
+| `log.md` のエントリ（計画・発見・仕様変更・手戻り・順序変更） | [references/topics/article-scheduled-publishing/log.md](references/topics/article-scheduled-publishing/log.md)             |
+| 所属プラン（フォルダ方式。完了済みだが `open` の間は残す）    | [references/planning/article-publish-state/00-overview.md](references/planning/article-publish-state/00-overview.md)       |
+| 手戻りで追加した所属プラン（単一ファイル完結）                | [references/planning/publish-at-utc.md](references/planning/publish-at-utc.md)                                             |
 
 記入例はすべて `open` の状態。`closed` / `abandoned` の書き方（`[完了]` エントリ、`plans: []`）は [thread-closing.md](guides/thread-closing.md) の手順どおりに読み替える。
 

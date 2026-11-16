@@ -10,10 +10,10 @@ ChatGPT などとの練習セッションのログをレビューし続ける運
 ## 構成
 
 - [`guides/`](./guides) — 考え方の説明（なぜこう分けるか）。最初に読む。
-    - [01-philosophy.md](./guides/01-philosophy.md) — 核となる4つの原則
-    - [02-layout.md](./guides/02-layout.md) — トップフォルダの分け方と使い分け
-    - [03-agent-instructions.md](./guides/03-agent-instructions.md) — AI向け指示ファイル（AGENTS.md）の書き方
-    - [04-adapting.md](./guides/04-adapting.md) — 自分のリポジトリに移植する手順とチェックリスト
+  - [01-philosophy.md](./guides/01-philosophy.md) — 核となる4つの原則
+  - [02-layout.md](./guides/02-layout.md) — トップフォルダの分け方と使い分け
+  - [03-agent-instructions.md](./guides/03-agent-instructions.md) — AI向け指示ファイル（AGENTS.md）の書き方
+  - [04-adapting.md](./guides/04-adapting.md) — 自分のリポジトリに移植する手順とチェックリスト
 - [`references/`](./references) — 実際に配置するファイルの参考パターン。コピー先のリポジトリと同じ構造で並べてあり、
   プレースホルダ（`{topic}` 等）と最小限のダミー内容のみで構成されている。
 - [`lint_learning_repo.py`](./lint_learning_repo.py) — 移植後のリポジトリに残ったプレースホルダ・リンク切れ・

@@ -4,13 +4,13 @@
 
 学習者が最初に開くのは `index.md`（`practice.py refresh` の生成物）。エージェントは作業を始める前に、場面に対応するガイドを読む。
 
-| 場面 | 読む場所 |
-| ---- | -------- |
-| `inbox/` にファイルが置かれた・「ログを置いた」と言われた | [guides/ingesting.md](guides/ingesting.md) → 続けて [guides/reviewing.md](guides/reviewing.md) |
-| 未レビューのセッションがある・フィードバックを頼まれた | [guides/reviewing.md](guides/reviewing.md) |
-| lint が `current な feedback` を警告した・まとめを頼まれた | [guides/digesting.md](guides/digesting.md) |
-| 次に何を練習するか聞かれた | [guides/suggesting.md](guides/suggesting.md) |
-| ファイルの書式・状態値・lint エラーの意味を確かめる | [guides/formats.md](guides/formats.md) |
+| 場面                                                       | 読む場所                                                                                       |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `inbox/` にファイルが置かれた・「ログを置いた」と言われた  | [guides/ingesting.md](guides/ingesting.md) → 続けて [guides/reviewing.md](guides/reviewing.md) |
+| 未レビューのセッションがある・フィードバックを頼まれた     | [guides/reviewing.md](guides/reviewing.md)                                                     |
+| lint が `current な feedback` を警告した・まとめを頼まれた | [guides/digesting.md](guides/digesting.md)                                                     |
+| 次に何を練習するか聞かれた                                 | [guides/suggesting.md](guides/suggesting.md)                                                   |
+| ファイルの書式・状態値・lint エラーの意味を確かめる        | [guides/formats.md](guides/formats.md)                                                         |
 
 ## 不変条件
 
@@ -40,15 +40,15 @@ uv run practice-review/practice.py refresh practice-review                      
 
 書こうとしているファイルに対応するサンプルだけを読み、書式と粒度をそろえる。`references/` は導入先の `practice-review/` と同じ構造で、2026-10-20 に3件目のセッションを取り込み、まだレビューしていない状態。
 
-| 書くもの | サンプル |
-| -------- | -------- |
-| Feedback（`current`） | [references/feedback/2026-10-13-job-interview.md](references/feedback/2026-10-13-job-interview.md) |
+| 書くもの                                         | サンプル                                                                                                                                                           |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Feedback（`current`）                            | [references/feedback/2026-10-13-job-interview.md](references/feedback/2026-10-13-job-interview.md)                                                                 |
 | Feedback（Digest に置き換えられた `superseded`） | [references/feedback/2026-10-06-ordering-coffee.md](references/feedback/2026-10-06-ordering-coffee.md)（本文は作ったときのまま。frontmatter とバナーだけが変わる） |
-| Digest | [references/digests/2026-10-10-first-week.md](references/digests/2026-10-10-first-week.md) |
-| Suggestions | [references/suggestions/2026-10-13-next-topics.md](references/suggestions/2026-10-13-next-topics.md) |
-| profile.md | [references/profile.md](references/profile.md) |
-| 取り込んだセッション（`unreviewed`） | [references/sessions/2026/2026-10-20-weekend-plans.md](references/sessions/2026/2026-10-20-weekend-plans.md)（エクスポートの書式の例を兼ねる） |
-| index.md（生成物） | [references/index.md](references/index.md) |
+| Digest                                           | [references/digests/2026-10-10-first-week.md](references/digests/2026-10-10-first-week.md)                                                                         |
+| Suggestions                                      | [references/suggestions/2026-10-13-next-topics.md](references/suggestions/2026-10-13-next-topics.md)                                                               |
+| profile.md                                       | [references/profile.md](references/profile.md)                                                                                                                     |
+| 取り込んだセッション（`unreviewed`）             | [references/sessions/2026/2026-10-20-weekend-plans.md](references/sessions/2026/2026-10-20-weekend-plans.md)（エクスポートの書式の例を兼ねる）                     |
+| index.md（生成物）                               | [references/index.md](references/index.md)                                                                                                                         |
 
 ## このテンプレートを編集するとき
 

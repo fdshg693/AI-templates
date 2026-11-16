@@ -121,7 +121,9 @@ class Linter:
             return []
         match = LIST_VALUE.match(value)
         if not match:
-            self.error(decision.path, f"{key} は [0001, 0002] 形式のリストにする（現在: {value!r}）", line)
+            self.error(
+                decision.path, f"{key} は [0001, 0002] 形式のリストにする（現在: {value!r}）", line
+            )
             return []
         items = [s.strip() for s in match.group(1).split(",") if s.strip()]
         for item in items:
@@ -150,7 +152,11 @@ class Linter:
             self.error(path, f"type は '{TYPE}' にする（現在: {value!r}）", line)
         if decision.status not in STATUSES:
             allowed = " / ".join(sorted(STATUSES))
-            self.error(path, f"status は {allowed} のいずれか（現在: {decision.status!r}）", decision.line("status"))
+            self.error(
+                path,
+                f"status は {allowed} のいずれか（現在: {decision.status!r}）",
+                decision.line("status"),
+            )
         value, line = fm.get("date", (None, 1))
         if value is None or not DATE.match(value):
             self.error(path, f"date は YYYY-MM-DD にする（現在: {value!r}）", line)
@@ -194,31 +200,61 @@ class Linter:
             self.error(path, "節の順序は " + " → ".join(SECTIONS) + " にする", line)
         if OPTIONS_SECTION in titles and options < MIN_OPTIONS:
             line = next(i for t, i in found if t == OPTIONS_SECTION)
-            self.error(path, f"'## {OPTIONS_SECTION}' に ### の選択肢を{MIN_OPTIONS}つ以上書く（現在: {options}）", line)
+            self.error(
+                path,
+                f"'## {OPTIONS_SECTION}' に ### の選択肢を{MIN_OPTIONS}つ以上書く（現在: {options}）",
+                line,
+            )
 
     def check_supersede(self):
         for d in self.decisions.values():
             if d.number in d.supersedes or d.number in d.superseded_by:
-                self.error(d.path, "自分自身を supersedes / superseded_by に書いている", d.line("supersedes"))
+                self.error(
+                    d.path,
+                    "自分自身を supersedes / superseded_by に書いている",
+                    d.line("supersedes"),
+                )
             if d.status == "superseded" and not d.superseded_by:
-                self.error(d.path, "status: superseded なら superseded_by に後継の番号を書く", d.line("superseded_by"))
+                self.error(
+                    d.path,
+                    "status: superseded なら superseded_by に後継の番号を書く",
+                    d.line("superseded_by"),
+                )
             if d.superseded_by and d.status != "superseded":
-                self.error(d.path, f"superseded_by があるなら status は superseded にする（現在: {d.status!r}）", d.line("status"))
+                self.error(
+                    d.path,
+                    f"superseded_by があるなら status は superseded にする（現在: {d.status!r}）",
+                    d.line("status"),
+                )
             for num in d.supersedes:
                 old = self.decisions.get(num)
                 if old is None:
                     self.error(d.path, f"supersedes の {num} が存在しない", d.line("supersedes"))
                 elif d.status == "accepted" and d.number not in old.superseded_by:
-                    self.error(old.path, f"{d.number} が accepted でこれを置き換えている。superseded_by に {d.number} を足し、status を superseded にする", old.line("superseded_by"))
+                    self.error(
+                        old.path,
+                        f"{d.number} が accepted でこれを置き換えている。superseded_by に {d.number} を足し、status を superseded にする",
+                        old.line("superseded_by"),
+                    )
             for num in d.superseded_by:
                 new = self.decisions.get(num)
                 if new is None:
-                    self.error(d.path, f"superseded_by の {num} が存在しない", d.line("superseded_by"))
+                    self.error(
+                        d.path, f"superseded_by の {num} が存在しない", d.line("superseded_by")
+                    )
                     continue
                 if d.number not in new.supersedes:
-                    self.error(new.path, f"{d.number} の superseded_by がこれを指している。supersedes に {d.number} を足す", new.line("supersedes"))
+                    self.error(
+                        new.path,
+                        f"{d.number} の superseded_by がこれを指している。supersedes に {d.number} を足す",
+                        new.line("supersedes"),
+                    )
                 if new.status != "accepted":
-                    self.error(d.path, f"後継 {num} が accepted ではない（現在: {new.status!r}）。後継が採用されるまで置き換えない", d.line("superseded_by"))
+                    self.error(
+                        d.path,
+                        f"後継 {num} が accepted ではない（現在: {new.status!r}）。後継が採用されるまで置き換えない",
+                        d.line("superseded_by"),
+                    )
 
     def check_links(self, path, lines):
         for i, line in body_lines(lines):
@@ -227,7 +263,11 @@ class Linter:
                     continue
                 dest = (path.parent / target.split("#", 1)[0]).resolve()
                 if self.examples and not dest.is_relative_to(self.root.resolve()):
-                    self.error(path, f"フォルダ外へのリンク（記入例はコピー先に無いものを指せない）: {target}", i)
+                    self.error(
+                        path,
+                        f"フォルダ外へのリンク（記入例はコピー先に無いものを指せない）: {target}",
+                        i,
+                    )
                 elif not dest.exists():
                     self.error(path, f"リンク切れ: {target}", i)
 
@@ -245,13 +285,21 @@ class Linter:
         self.check_supersede()
 
     def next_number(self):
-        numbers = [int(m.group(1)) for p in self.decision_files() if (m := DECISION_NAME.match(p.name))]
+        numbers = [
+            int(m.group(1)) for p in self.decision_files() if (m := DECISION_NAME.match(p.name))
+        ]
         return f"{max(numbers, default=0) + 1:04d}"
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("root", type=Path, help="検査するフォルダ（導入先の decisions/、または --examples で references/）")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "root",
+        type=Path,
+        help="検査するフォルダ（導入先の decisions/、または --examples で references/）",
+    )
     parser.add_argument("--examples", action="store_true", help="テンプレートの記入例を検査する")
     parser.add_argument("--strict", action="store_true", help="警告もエラー扱いにする")
     parser.add_argument("--next", action="store_true", help="次に使う番号を表示して終了する")
@@ -268,7 +316,9 @@ def main():
         print(f"error: {msg}")
     for msg in linter.warnings:
         print(f"warning: {msg}")
-    print(f"{len(linter.decisions)} decisions checked, {len(linter.errors)} errors, {len(linter.warnings)} warnings")
+    print(
+        f"{len(linter.decisions)} decisions checked, {len(linter.errors)} errors, {len(linter.warnings)} warnings"
+    )
     failed = linter.errors or (args.strict and linter.warnings)
     return 1 if failed else 0
 

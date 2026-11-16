@@ -6,15 +6,15 @@
 
 ### 場面別の参照先
 
-| 場面 | 読む場所 |
-| --- | --- |
-| 原則を確認・変更する | [guides/01-philosophy.md](guides/01-philosophy.md) |
-| フォルダ構成・ドキュメント種別を変える | [guides/02-layout.md](guides/02-layout.md) と `references/tools/vault/schema.py` の `KINDS` |
-| スキーマ・検証の仕組みを変える | [guides/03-schema.md](guides/03-schema.md) と `references/tools/vault/` |
-| ステータス・圧縮・重複チェックの流れを変える | [guides/04-lifecycle.md](guides/04-lifecycle.md) と `references/vault/AGENTS.md` |
-| ダッシュボード・索引・派生文書を変える | [guides/05-derived.md](guides/05-derived.md) |
-| AI 向けの決まり・CLI 規約を変える | [guides/06-ai-collaboration.md](guides/06-ai-collaboration.md) と `references/AGENTS.md` |
-| 導入手順・書き換え箇所を変える | [guides/07-adapting.md](guides/07-adapting.md) |
+| 場面                                         | 読む場所                                                                                    |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 原則を確認・変更する                         | [guides/01-philosophy.md](guides/01-philosophy.md)                                          |
+| フォルダ構成・ドキュメント種別を変える       | [guides/02-layout.md](guides/02-layout.md) と `references/tools/vault/schema.py` の `KINDS` |
+| スキーマ・検証の仕組みを変える               | [guides/03-schema.md](guides/03-schema.md) と `references/tools/vault/`                     |
+| ステータス・圧縮・重複チェックの流れを変える | [guides/04-lifecycle.md](guides/04-lifecycle.md) と `references/vault/AGENTS.md`            |
+| ダッシュボード・索引・派生文書を変える       | [guides/05-derived.md](guides/05-derived.md)                                                |
+| AI 向けの決まり・CLI 規約を変える            | [guides/06-ai-collaboration.md](guides/06-ai-collaboration.md) と `references/AGENTS.md`    |
+| 導入手順・書き換え箇所を変える               | [guides/07-adapting.md](guides/07-adapting.md)                                              |
 
 ### 編集時のルール
 
@@ -33,6 +33,7 @@
   ```
 
   終わったら `references/data/vault_index.sqlite` と `__pycache__/` を消す（コピー先に持ち込まない）。
+
 - サンプルの日付は 2026-10-20 時点の状態として書いてある（期限切れ・圧縮候補の判定がこの日付を前提にしている）。日付を変えるなら `--today` も合わせる。
 - このフォルダでテンプレートを使った実作業はしない。試すときは別の場所にコピーする。
 - `references/` を変えたら、テンプレート集ルートで `uv run starter/check_starters.py --sync` を実行し、このテンプレートを使うスターター（`starter/knowledge-vault-*`）にも反映する。

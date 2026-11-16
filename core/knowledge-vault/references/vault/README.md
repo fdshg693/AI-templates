@@ -23,13 +23,13 @@ vault/
 
 ## 入口
 
-| 知りたいこと | 見る場所 |
-| --- | --- |
-| 何を基準に選ぶか | [profile/preferences.md](profile/preferences.md) ＋ 各 scope の `criteria.md` |
-| 今どうなっているか | [scopes/work/dashboard.md](scopes/work/dashboard.md) / [scopes/personal/dashboard.md](scopes/personal/dashboard.md) |
-| ある対象の調査・経緯 | `scopes/{scope}/entities/{key}/index.md` |
-| 過去に見送った理由 | `scopes/{scope}/archive.md`（または `uv run tools/vault/check_entity.py`） |
-| 横断検索したい | `uv run tools/vault/build_index.py -q <キーワード>`（ヒットした正本のパスを返す） |
-| フロントマターに何を書けるか | [docs/vault-schema.md](../docs/vault-schema.md)（正は `tools/vault/schema.py`） |
+| 知りたいこと                 | 見る場所                                                                                                            |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| 何を基準に選ぶか             | [profile/preferences.md](profile/preferences.md) ＋ 各 scope の `criteria.md`                                       |
+| 今どうなっているか           | [scopes/work/dashboard.md](scopes/work/dashboard.md) / [scopes/personal/dashboard.md](scopes/personal/dashboard.md) |
+| ある対象の調査・経緯         | `scopes/{scope}/entities/{key}/index.md`                                                                            |
+| 過去に見送った理由           | `scopes/{scope}/archive.md`（または `uv run tools/vault/check_entity.py`）                                          |
+| 横断検索したい               | `uv run tools/vault/build_index.py -q <キーワード>`（ヒットした正本のパスを返す）                                   |
+| フロントマターに何を書けるか | [docs/vault-schema.md](../docs/vault-schema.md)（正は `tools/vault/schema.py`）                                     |
 
 運用ルールは [AGENTS.md](AGENTS.md)。

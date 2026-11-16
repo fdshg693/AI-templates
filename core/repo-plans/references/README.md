@@ -26,12 +26,12 @@ references/
 
 ## 読む順序
 
-| フェーズ | drafting | revising | complete |
-| -------- | -------- | -------- | -------- |
-| ラフ案 | [rough/01-worklog-idea.md](rough/01-worklog-idea.md)（`promoted`） | | |
+| フェーズ          | drafting                                                                               | revising                                                                                                 | complete                                                                                  |
+| ----------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| ラフ案            | [rough/01-worklog-idea.md](rough/01-worklog-idea.md)（`promoted`）                     |                                                                                                          |                                                                                           |
 | 1. 仕様・技術確定 | [初期案と送る質問](drafting/01-specification-and-technology/01-worklog-first-slice.md) | [回答と、混ざった対象外の要望の扱い](revising/01-specification-and-technology/01-worklog-first-slice.md) | [フェーズ2への引継ぎ](complete/01-specification-and-technology/01-worklog-first-slice.md) |
-| 2. 最小実装 | [最小実装の提示](drafting/02-minimal-delivery/01-add-and-list.md) | [デモで見つかった問題と改訂](revising/02-minimal-delivery/01-add-and-list.md) | [フェーズ3への引継ぎ](complete/02-minimal-delivery/01-add-and-list.md) |
-| 3. 基盤の定着 | [正本の置き場の案](drafting/03-foundation/01-readme-and-rules.md) | [文書と規約のレビュー反映](revising/03-foundation/01-readme-and-rules.md) | [次の縦切りへ渡せる完了状態](complete/03-foundation/01-readme-and-rules.md) |
+| 2. 最小実装       | [最小実装の提示](drafting/02-minimal-delivery/01-add-and-list.md)                      | [デモで見つかった問題と改訂](revising/02-minimal-delivery/01-add-and-list.md)                            | [フェーズ3への引継ぎ](complete/02-minimal-delivery/01-add-and-list.md)                    |
+| 3. 基盤の定着     | [正本の置き場の案](drafting/03-foundation/01-readme-and-rules.md)                      | [文書と規約のレビュー反映](revising/03-foundation/01-readme-and-rules.md)                                | [次の縦切りへ渡せる完了状態](complete/03-foundation/01-readme-and-rules.md)               |
 
 行ごとに左から右へ読むと、1つの計画ファイルがどう更新されていくかが分かる。最後に [next-slice-boundary.md](next-slice-boundary.md)（完了後に来た二つの要望の振り分け）を読む。
 
@@ -41,14 +41,14 @@ references/
 
 ## `plans/references/` との対応
 
-| 既存コードベース向けの参照例                 | この実行例で対応する場所                                                                                                                                       | 違い                                                                         |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `postal-code-autofill/00-overview.md`        | この `README.md`                                                                                                                                               | repo-plans では機能の概要ではなく、3フェーズ全体の入口を示す。               |
+| 既存コードベース向けの参照例                    | この実行例で対応する場所                                                                                                                                    | 違い                                                                         |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `postal-code-autofill/00-overview.md`           | この `README.md`                                                                                                                                            | repo-plans では機能の概要ではなく、3フェーズ全体の入口を示す。               |
 | `postal-code-autofill/rough/01-initial-idea.md` | [rough/01-worklog-idea.md](rough/01-worklog-idea.md)                                                                                                        | 詳細計画前の仮説を残す役割は同じ。                                           |
-| `postal-code-autofill/01-research-*.md`      | [フェーズ1](drafting/01-specification-and-technology/01-worklog-first-slice.md) と [progress/01-technology-research.md](progress/01-technology-research.md) | 調査は技術選定と不可分なので、仕様・技術確定フェーズで完了する。             |
-| `postal-code-autofill/02-*.md`               | [フェーズ2](drafting/02-minimal-delivery/01-add-and-list.md) と [progress/02-minimal-delivery.md](progress/02-minimal-delivery.md)                           | 最小の縦切りを実装し、利用者へのデモまでを一つのフェーズとして扱う。         |
-| `tag-popularity-sort.md`                     | [next-slice-boundary.md](next-slice-boundary.md)                                                                                                               | 新規リポジトリ作成後の小さな機能追加は repo-plans ではなく `plans/` で扱う。 |
-| `postal-code-autofill/progress/`             | [progress/README.md](progress/README.md)                                                                                                                       | 詳細記録と計画本文を分ける原則は同じ。                                       |
+| `postal-code-autofill/01-research-*.md`         | [フェーズ1](drafting/01-specification-and-technology/01-worklog-first-slice.md) と [progress/01-technology-research.md](progress/01-technology-research.md) | 調査は技術選定と不可分なので、仕様・技術確定フェーズで完了する。             |
+| `postal-code-autofill/02-*.md`                  | [フェーズ2](drafting/02-minimal-delivery/01-add-and-list.md) と [progress/02-minimal-delivery.md](progress/02-minimal-delivery.md)                          | 最小の縦切りを実装し、利用者へのデモまでを一つのフェーズとして扱う。         |
+| `tag-popularity-sort.md`                        | [next-slice-boundary.md](next-slice-boundary.md)                                                                                                            | 新規リポジトリ作成後の小さな機能追加は repo-plans ではなく `plans/` で扱う。 |
+| `postal-code-autofill/progress/`                | [progress/README.md](progress/README.md)                                                                                                                    | 詳細記録と計画本文を分ける原則は同じ。                                       |
 
 ## 最終状態
 

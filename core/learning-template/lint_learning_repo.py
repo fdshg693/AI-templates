@@ -73,7 +73,8 @@ def bad_placeholders(text, allow):
 
 def subdirs(folder):
     return [
-        p for p in sorted(folder.iterdir())
+        p
+        for p in sorted(folder.iterdir())
         if p.is_dir() and p.name not in SKIP_DIRS and not p.name.startswith(".")
     ]
 
@@ -90,7 +91,11 @@ def check_layout(root, folder_names, err):
                 err(folder, 0, f"必須ファイル {name} が無い")
         for name in forbidden:
             if (folder / name).exists():
-                err(folder / name, 0, "この階層には置かない（ルールはルート・トップ・トピック階層に集約する）")
+                err(
+                    folder / name,
+                    0,
+                    "この階層には置かない（ルールはルート・トップ・トピック階層に集約する）",
+                )
         if len(rules) > 1:
             for child in subdirs(folder):
                 walk(child, rules[1:])

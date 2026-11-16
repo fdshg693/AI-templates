@@ -15,11 +15,11 @@
    uv run tools/vault/check_entity.py --scope life -s "{名称}"
    ```
 
-   | 判定 | すること |
-   | --- | --- |
-   | `[EXCLUDED]` | 前にやめた・合わなかった理由（台帳なら再開の条件も）を示し、本人が「それでもやる」と言わない限り勧めない |
-   | `[EXISTING]` | 新しいフォルダは作らず、既存の対象にイベントログを足すか、`index.md` に `### 追記: YYYY-MM-DD` で足す |
-   | `[NOT FOUND]` | `_templates/entity.md` から `scopes/life/entities/{key}/index.md` を作る |
+   | 判定          | すること                                                                                                 |
+   | ------------- | -------------------------------------------------------------------------------------------------------- |
+   | `[EXCLUDED]`  | 前にやめた・合わなかった理由（台帳なら再開の条件も）を示し、本人が「それでもやる」と言わない限り勧めない |
+   | `[EXISTING]`  | 新しいフォルダは作らず、既存の対象にイベントログを足すか、`index.md` に `### 追記: YYYY-MM-DD` で足す    |
+   | `[NOT FOUND]` | `_templates/entity.md` から `scopes/life/entities/{key}/index.md` を作る                                 |
 
 3. 調べただけで足切り条件（`criteria.md`）に当たった候補（お店・ジム・教室など）はフォルダを作らず、`triage/{YYYY-MM-DD}_{topic}.md` にバッチ単位でまとめる。`entries` に名称を漏れなく書く（重複チェックが照合する）。
 

@@ -4,13 +4,13 @@
 フォルダパターンに落とし込む。`references/` には、ここで挙げる5パターンすべての最小構成例を置いてあるが、
 **自分の学習目的に合わないパターンは採用しなくてよい**。最初は1〜2個から始めて、必要になったら増やす。
 
-| フォルダ例 | 目的 | 中の構成 | `references/` 内の主要ファイル |
-|---|---|---|---|
-| `study/{topic}/{project}` | 実装して試しながら学ぶ | トピック→プロジェクト（ステップ）の二段階 | [study/AGENTS.md](../references/study/AGENTS.md)、[study/{topic}/AGENTS.md](../references/study/{topic}/AGENTS.md)、[PLAN.md](../references/study/{topic}/PLAN.md)、[{project}/README.md](../references/study/{topic}/{project}/README.md)、[KNOWLEDGE.md](../references/study/{topic}/{project}/KNOWLEDGE.md)、[questions/](../references/study/{topic}/{project}/questions/{question}.md) |
-| `reading/{topic}/` | 座学・読み物として整理する（実装しない） | `overview/`（必須）＋`details/`（任意）＋`questions/`（任意） | [reading/AGENTS.md](../references/reading/AGENTS.md)、[{topic}/overview/README.md](../references/reading/{topic}/overview/README.md)、[01-{concept}.md](../references/reading/{topic}/overview/01-{concept}.md) |
-| `sandbox/{topic}/{project}` | 外部の有料リソース・クラウドを使わず、ローカルだけで検証する | `study/` と同じ二段階構成 | [sandbox/AGENTS.md](../references/sandbox/AGENTS.md) |
-| `build/{project}` | 学習の枠を超えて、実際に使うものを本気で作る | 標準構成をベースにしつつ自由度を認める（今後の拡張は `PLAN.md` ではなく `BACKLOG.md`） | [build/AGENTS.md](../references/build/AGENTS.md)、[{project}/README.md](../references/build/{project}/README.md)、[BACKLOG.md](../references/build/{project}/BACKLOG.md)、[NOTES.md](../references/build/{project}/NOTES.md) |
-| `cheatsheet/{tool}/` | 学習記録ではない、素早く引ける操作リファレンス | ツール別サブフォルダ＋操作単位のファイル | [cheatsheet/AGENTS.md](../references/cheatsheet/AGENTS.md) |
+| フォルダ例                  | 目的                                                         | 中の構成                                                                               | `references/` 内の主要ファイル                                                                                                                                                                                                                                                                                                                                                              |
+| --------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `study/{topic}/{project}`   | 実装して試しながら学ぶ                                       | トピック→プロジェクト（ステップ）の二段階                                              | [study/AGENTS.md](../references/study/AGENTS.md)、[study/{topic}/AGENTS.md](../references/study/{topic}/AGENTS.md)、[PLAN.md](../references/study/{topic}/PLAN.md)、[{project}/README.md](../references/study/{topic}/{project}/README.md)、[KNOWLEDGE.md](../references/study/{topic}/{project}/KNOWLEDGE.md)、[questions/](../references/study/{topic}/{project}/questions/{question}.md) |
+| `reading/{topic}/`          | 座学・読み物として整理する（実装しない）                     | `overview/`（必須）＋`details/`（任意）＋`questions/`（任意）                          | [reading/AGENTS.md](../references/reading/AGENTS.md)、[{topic}/overview/README.md](../references/reading/{topic}/overview/README.md)、[01-{concept}.md](../references/reading/{topic}/overview/01-{concept}.md)                                                                                                                                                                             |
+| `sandbox/{topic}/{project}` | 外部の有料リソース・クラウドを使わず、ローカルだけで検証する | `study/` と同じ二段階構成                                                              | [sandbox/AGENTS.md](../references/sandbox/AGENTS.md)                                                                                                                                                                                                                                                                                                                                        |
+| `build/{project}`           | 学習の枠を超えて、実際に使うものを本気で作る                 | 標準構成をベースにしつつ自由度を認める（今後の拡張は `PLAN.md` ではなく `BACKLOG.md`） | [build/AGENTS.md](../references/build/AGENTS.md)、[{project}/README.md](../references/build/{project}/README.md)、[BACKLOG.md](../references/build/{project}/BACKLOG.md)、[NOTES.md](../references/build/{project}/NOTES.md)                                                                                                                                                                |
+| `cheatsheet/{tool}/`        | 学習記録ではない、素早く引ける操作リファレンス               | ツール別サブフォルダ＋操作単位のファイル                                               | [cheatsheet/AGENTS.md](../references/cheatsheet/AGENTS.md)                                                                                                                                                                                                                                                                                                                                  |
 
 `references/` はコピー先と同じ構造で並べてあるので、`references/` 内のパスがそのままコピー先のパスになる
 （対応表と手順は [04-adapting.md](./04-adapting.md)）。
@@ -47,14 +47,14 @@
 `lint_learning_repo.py` はこの表どおりかを検査する（表を変えたらスクリプトの `LAYOUT` も合わせる）。
 任意のファイル（`PLAN.md`・`HISTORY.md`・`MERMAID.md`・`questions/`・`details/` など）は検査しない。
 
-| 場所 | 必須 | 置かない |
-|---|---|---|
-| ルート | `README.md`・`AGENTS.md`・`CLAUDE.md` | |
-| 採用したトップフォルダ（`study/` など） | `AGENTS.md`・`CLAUDE.md` | |
-| `study/{topic}/`・`sandbox/{topic}/` | `AGENTS.md`・`CLAUDE.md` | |
-| `study/{topic}/{project}/`・`sandbox/{topic}/{project}/` | `README.md`・`KNOWLEDGE.md` | `AGENTS.md`・`CLAUDE.md` |
-| `reading/{topic}/` | `overview/README.md` | |
-| `build/{project}/` | `README.md` | |
+| 場所                                                     | 必須                                  | 置かない                 |
+| -------------------------------------------------------- | ------------------------------------- | ------------------------ |
+| ルート                                                   | `README.md`・`AGENTS.md`・`CLAUDE.md` |                          |
+| 採用したトップフォルダ（`study/` など）                  | `AGENTS.md`・`CLAUDE.md`              |                          |
+| `study/{topic}/`・`sandbox/{topic}/`                     | `AGENTS.md`・`CLAUDE.md`              |                          |
+| `study/{topic}/{project}/`・`sandbox/{topic}/{project}/` | `README.md`・`KNOWLEDGE.md`           | `AGENTS.md`・`CLAUDE.md` |
+| `reading/{topic}/`                                       | `overview/README.md`                  |                          |
+| `build/{project}/`                                       | `README.md`                           |                          |
 
 `study/{topic}/PLAN.md` は、`AGENTS.md` が長くなって分割するときに作るファイルなので必須にしない
 （[03-agent-instructions.md](./03-agent-instructions.md)）。`build/{project}/BACKLOG.md` は推奨だが必須ではない。

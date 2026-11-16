@@ -22,11 +22,24 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from schema import DASHBOARD_COLUMNS, DASHBOARD_GROUP_BY, ENTITY_STATUS, EVENT_KINDS, KINDS, RECENT_DAYS, SCOPES, StatusCategory
+from schema import (
+    DASHBOARD_COLUMNS,
+    DASHBOARD_GROUP_BY,
+    ENTITY_STATUS,
+    EVENT_KINDS,
+    KINDS,
+    RECENT_DAYS,
+    SCOPES,
+    StatusCategory,
+)
 from vaultlib import ROOT, Doc, Vault, configure_stdio, emit_paths, load_vault, log
 
 BEGIN, END = "<!-- dashboard:begin -->", "<!-- dashboard:end -->"
-ACTION_SECTIONS = (("action_required", "🔴 要対応"), ("scheduled", "📅 確定済みの予定"), ("waiting", "⏳ 返信・結果待ち"))
+ACTION_SECTIONS = (
+    ("action_required", "🔴 要対応"),
+    ("scheduled", "📅 確定済みの予定"),
+    ("waiting", "⏳ 返信・結果待ち"),
+)
 
 
 def _cell(value: object, max_len: int = 40) -> str:
@@ -42,7 +55,11 @@ def _recent(vault: Vault, scope: str, entities: list[Doc], today: dt.date) -> li
     since = today - dt.timedelta(days=RECENT_DAYS)
     by_key = {d.folder_key: d for d in entities}
     events = sorted(
-        (e for e in vault.of("event", scope) if e.ok and e.folder_key in by_key and since <= e.get("date") <= today),
+        (
+            e
+            for e in vault.of("event", scope)
+            if e.ok and e.folder_key in by_key and since <= e.get("date") <= today
+        ),
         key=lambda e: (e.get("date"), e.rel),
         reverse=True,
     )
@@ -52,7 +69,9 @@ def _recent(vault: Vault, scope: str, entities: list[Doc], today: dt.date) -> li
     lines += ["| 日付 | 対象 | 記録 |", "| --- | --- | --- |"]
     for e in events:
         label = _cell(e.get("title") or EVENT_KINDS.get(e.get("kind"), e.get("kind")))
-        lines.append(f"| {e.get('date')} | {_link(by_key[e.folder_key])} | [{label}](entities/{e.folder_key}/{e.path.name}) |")
+        lines.append(
+            f"| {e.get('date')} | {_link(by_key[e.folder_key])} | [{label}](entities/{e.folder_key}/{e.path.name}) |"
+        )
     return [*lines, ""]
 
 
@@ -79,24 +98,42 @@ def _groups(rows: list[Doc]) -> list[tuple[str, list[Doc]]]:
     if DASHBOARD_GROUP_BY is None:
         return [("", rows)]
     choices = next(f.choices for f in KINDS["entity"].fields if f.name == DASHBOARD_GROUP_BY) or {}
-    return [(label, [d for d in rows if d.get(DASHBOARD_GROUP_BY) == value]) for value, label in choices.items()]
+    return [
+        (label, [d for d in rows if d.get(DASHBOARD_GROUP_BY) == value])
+        for value, label in choices.items()
+    ]
 
 
 def render_block(vault: Vault, scope: str, today: dt.date) -> str:
     entities = [d for d in vault.of("entity", scope) if d.ok]
     active = sorted(
         (d for d in entities if ENTITY_STATUS[d.get("status")].category == StatusCategory.ACTIVE),
-        key=lambda d: (ENTITY_STATUS[d.get("status")].order, str(d.get("next_due") or "9999"), d.folder_key),
+        key=lambda d: (
+            ENTITY_STATUS[d.get("status")].order,
+            str(d.get("next_due") or "9999"),
+            d.folder_key,
+        ),
     )
-    lines = [BEGIN, "", "<!-- 自動生成: tools/vault/build_dashboard.py。この区間は手で編集しない -->", ""]
+    lines = [
+        BEGIN,
+        "",
+        "<!-- 自動生成: tools/vault/build_dashboard.py。この区間は手で編集しない -->",
+        "",
+    ]
     for action, title in ACTION_SECTIONS:
-        rows = sorted((d for d in active if d.get("action_type") == action), key=lambda d: str(d.get("next_due") or "9999"))
+        rows = sorted(
+            (d for d in active if d.get("action_type") == action),
+            key=lambda d: str(d.get("next_due") or "9999"),
+        )
         lines += [f"### {title}", ""]
         if not rows:
             lines += ["（なし）", ""]
             continue
         lines += ["| 期限 | 対象 | 内容 |", "| --- | --- | --- |"]
-        lines += [f"| {_cell(d.get('next_due'))} | {_link(d)} | {_cell(d.get('next_action'), 60)} |" for d in rows]
+        lines += [
+            f"| {_cell(d.get('next_due'))} | {_link(d)} | {_cell(d.get('next_action'), 60)} |"
+            for d in rows
+        ]
         lines.append("")
 
     lines += _recent(vault, scope, entities, today)
@@ -113,7 +150,11 @@ def render_block(vault: Vault, scope: str, today: dt.date) -> str:
     counts = Counter(ENTITY_STATUS[d.get("status")].label for d in entities if d not in active)
     archived = sum(1 for _ in vault.archived_entries(scope))
     closed = " / ".join(f"{k} {v}" for k, v in counts.items()) or "なし"
-    lines += [f"進行中 {len(active)} 件。終了・除外: {closed}。見送り台帳: {archived} 件。", "", END]
+    lines += [
+        f"進行中 {len(active)} 件。終了・除外: {closed}。見送り台帳: {archived} 件。",
+        "",
+        END,
+    ]
     return "\n".join(lines)
 
 
@@ -146,13 +187,20 @@ def main() -> int:
     g.add_argument("--scope", choices=list(SCOPES))
     g.add_argument("--all", action="store_true", help="全 scope を更新する")
     p.add_argument("--root", type=Path, default=ROOT)
-    p.add_argument("--today", type=dt.date.fromisoformat, default=dt.date.today(), help="「最近の出来事」の基準日")
+    p.add_argument(
+        "--today",
+        type=dt.date.fromisoformat,
+        default=dt.date.today(),
+        help="「最近の出来事」の基準日",
+    )
     p.add_argument("-s", "--summary", action="store_true", help="生成した一覧を stderr に出す")
     args = p.parse_args()
 
     vault = load_vault(args.root)
     if vault.errors:
-        log(f"[warn] 検証エラーが {len(vault.errors)} 件ある（エラーのあるファイルは一覧に出ない）。validate.py で確認する")
+        log(
+            f"[warn] 検証エラーが {len(vault.errors)} 件ある（エラーのあるファイルは一覧に出ない）。validate.py で確認する"
+        )
     paths = []
     for scope in SCOPES if args.all else [args.scope]:
         path = build(vault, scope, args.today)

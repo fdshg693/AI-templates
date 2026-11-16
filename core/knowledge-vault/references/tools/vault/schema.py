@@ -51,14 +51,30 @@ class StatusMeta:
 
 # --- 導入先で書き換える ---
 ENTITY_STATUS: dict[str, StatusMeta] = {
-    "trialing": StatusMeta("試用中", StatusCategory.ACTIVE, 0, ExclusionScope.NONE, "実際に使って確かめている"),
-    "evaluating": StatusMeta("比較検討中", StatusCategory.ACTIVE, 1, ExclusionScope.NONE, "調査済みで、試すか検討中"),
-    "researching": StatusMeta("調査中", StatusCategory.ACTIVE, 2, ExclusionScope.NONE, "調査に着手したばかり・未検証"),
-    "on_hold": StatusMeta("保留", StatusCategory.ACTIVE, 3, ExclusionScope.NONE, "時期待ち等で一時停止"),
-    "adopted": StatusMeta("採用", StatusCategory.CLOSED, 10, ExclusionScope.NONE, "採用した（検討終了）"),
-    "dropped": StatusMeta("見送り", StatusCategory.CLOSED, 11, ExclusionScope.SAME_SCOPE, "自分の判断で見送った"),
-    "blocked": StatusMeta("不可", StatusCategory.CLOSED, 12, ExclusionScope.SAME_SCOPE, "外部要因で使えなかった"),
-    "blacklisted": StatusMeta("除外", StatusCategory.EXCLUDED, 20, ExclusionScope.ALL_SCOPES, "二度と検討しない"),
+    "trialing": StatusMeta(
+        "試用中", StatusCategory.ACTIVE, 0, ExclusionScope.NONE, "実際に使って確かめている"
+    ),
+    "evaluating": StatusMeta(
+        "比較検討中", StatusCategory.ACTIVE, 1, ExclusionScope.NONE, "調査済みで、試すか検討中"
+    ),
+    "researching": StatusMeta(
+        "調査中", StatusCategory.ACTIVE, 2, ExclusionScope.NONE, "調査に着手したばかり・未検証"
+    ),
+    "on_hold": StatusMeta(
+        "保留", StatusCategory.ACTIVE, 3, ExclusionScope.NONE, "時期待ち等で一時停止"
+    ),
+    "adopted": StatusMeta(
+        "採用", StatusCategory.CLOSED, 10, ExclusionScope.NONE, "採用した（検討終了）"
+    ),
+    "dropped": StatusMeta(
+        "見送り", StatusCategory.CLOSED, 11, ExclusionScope.SAME_SCOPE, "自分の判断で見送った"
+    ),
+    "blocked": StatusMeta(
+        "不可", StatusCategory.CLOSED, 12, ExclusionScope.SAME_SCOPE, "外部要因で使えなかった"
+    ),
+    "blacklisted": StatusMeta(
+        "除外", StatusCategory.EXCLUDED, 20, ExclusionScope.ALL_SCOPES, "二度と検討しない"
+    ),
 }
 
 # 見送り台帳（archive.md）に畳める status。トリアージ由来のエントリは discarded
@@ -129,7 +145,13 @@ CONTACT_STATUS: dict[str, str] = {
     "blacklisted": "今後関わらない",
 }
 
-RATINGS: dict[str, str] = {"S": "極めて有益", "A": "有益", "B": "普通", "C": "やや難あり", "D": "有害"}
+RATINGS: dict[str, str] = {
+    "S": "極めて有益",
+    "A": "有益",
+    "B": "普通",
+    "C": "やや難あり",
+    "D": "有害",
+}
 
 VISIBILITY: dict[str, str] = {
     "public": "外部に出す文章の素材にしてよい",
@@ -196,10 +218,22 @@ _ENTITY = Kind(
     scope_field="scope",
     fields=(
         F("title", "str", "正式名称", required=True),
-        F("key", "str", "kebab-case のキー。フォルダ名と一致させる", required=True, pattern=KEY_PATTERN),
+        F(
+            "key",
+            "str",
+            "kebab-case のキー。フォルダ名と一致させる",
+            required=True,
+            pattern=KEY_PATTERN,
+        ),
         F("aliases", "list[str]", "別名・略称・表記ゆれ（重複チェックの照合に使う）"),
         F("scope", "enum", "区分", required=True, choices=SCOPES),
-        F("status", "enum", "現在の状態", required=True, choices={k: v.label for k, v in ENTITY_STATUS.items()}),
+        F(
+            "status",
+            "enum",
+            "現在の状態",
+            required=True,
+            choices={k: v.label for k, v in ENTITY_STATUS.items()},
+        ),
         F("status_note", "str", "状態の補足（今どこで止まっているか）"),
         F("close_reason", "str", "終了・除外した理由（closed / excluded のとき必須）"),
         F("date", "date", "初回記録日", required=True),
@@ -228,7 +262,13 @@ _ENTITY = Kind(
                 F("from", "date", "畳んだ期間の最初のイベントの日付", required=True),
                 F("to", "date", "畳んだ期間の最後のイベントの日付", required=True),
                 F("count", "int", "畳んだイベントログの件数", required=True, min=1),
-                F("summary", "str", "その期間の傾向（2〜3 文）", required=True, max_len=DIGEST_SUMMARY_MAX),
+                F(
+                    "summary",
+                    "str",
+                    "その期間の傾向（2〜3 文）",
+                    required=True,
+                    max_len=DIGEST_SUMMARY_MAX,
+                ),
             ),
         ),
     ),
@@ -256,7 +296,13 @@ _CONTACT = Kind(
     key_field="contact_key",
     fields=(
         F("name", "str", "氏名・表示名", required=True),
-        F("contact_key", "str", "{org}_{name} 形式。フォルダ名と一致させる", required=True, pattern=CONTACT_KEY_PATTERN),
+        F(
+            "contact_key",
+            "str",
+            "{org}_{name} 形式。フォルダ名と一致させる",
+            required=True,
+            pattern=CONTACT_KEY_PATTERN,
+        ),
         F("org", "str", "所属"),
         F("scopes", "list[str]", "関わる scope"),
         F("status", "enum", "関係の状態", required=True, choices=CONTACT_STATUS),
@@ -318,7 +364,13 @@ _ARCHIVE = Kind(
                 F("aliases", "list[str]", "別名"),
                 F("status", "enum", "元の status", required=True, choices=ARCHIVED_STATUS),
                 F("closed_at", "date", "終了日", required=True),
-                F("reason", "str", "何が合わなかったか（条件の言葉で 1〜2 文）", required=True, max_len=ARCHIVE_REASON_MAX),
+                F(
+                    "reason",
+                    "str",
+                    "何が合わなかったか（条件の言葉で 1〜2 文）",
+                    required=True,
+                    max_len=ARCHIVE_REASON_MAX,
+                ),
                 F("reconsider_if", "str", "何が変われば再検討してよいか"),
                 F("contact", "str", "紹介元の contact-key", pattern=CONTACT_KEY_PATTERN),
             ),
@@ -346,10 +398,14 @@ _NOTE = Kind(
         F("source_file", "str", "派生（翻訳・要約）元のファイル。リポジトリルート相対"),
         F("source_updated_at", "date", "派生元の updated_at（同期した時点の値）"),
     ),
-    notes=("source_file を書いた文書は、派生元の updated_at が source_updated_at より新しいと警告になる（同期漏れ）。",),
+    notes=(
+        "source_file を書いた文書は、派生元の updated_at が source_updated_at より新しいと警告になる（同期漏れ）。",
+    ),
 )
 
-KINDS: dict[str, Kind] = {k.name: k for k in (_ENTITY, _EVENT, _CONTACT, _TRIAGE, _ARCHIVE, _DASHBOARD, _NOTE)}
+KINDS: dict[str, Kind] = {
+    k.name: k for k in (_ENTITY, _EVENT, _CONTACT, _TRIAGE, _ARCHIVE, _DASHBOARD, _NOTE)
+}
 
 
 # ---------------------------------------------------------------------------
@@ -371,7 +427,12 @@ def _lint_entity(d: dict[str, Any]) -> tuple[list[str], list[str]]:
     if isinstance(cmin, int) and isinstance(cmax, int) and cmin > cmax:
         errors.append("cost_min が cost_max より大きい")
     meta = ENTITY_STATUS.get(d.get("status", ""))
-    if meta and meta.category != StatusCategory.ACTIVE and d.get("status") != "adopted" and not d.get("close_reason"):
+    if (
+        meta
+        and meta.category != StatusCategory.ACTIVE
+        and d.get("status") != "adopted"
+        and not d.get("close_reason")
+    ):
         warnings.append(f"status={d['status']} なのに close_reason が無い")
     if d.get("action_type") in ("action_required", "scheduled") and not d.get("next_due"):
         warnings.append(f"action_type={d['action_type']} なのに next_due が無い")
@@ -382,7 +443,9 @@ def _lint_entity(d: dict[str, Any]) -> tuple[list[str], list[str]]:
 
 
 def _lint_event(d: dict[str, Any]) -> tuple[list[str], list[str]]:
-    return [], (["result が pending のまま。結果が出たら更新する"] if d.get("result") == "pending" else [])
+    return [], (
+        ["result が pending のまま。結果が出たら更新する"] if d.get("result") == "pending" else []
+    )
 
 
 LINTS: dict[str, Callable[[dict[str, Any]], tuple[list[str], list[str]]]] = {

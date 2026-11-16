@@ -70,9 +70,16 @@ def render() -> str:
         for f in kind.fields:
             if f.item:
                 out += [f"`{f.name}` の要素:", "", *_table(f.item), ""]
-    out += ["## entity の status", "", "| 値 | ラベル | 分類 | 並び順 | 除外範囲 | 意味 |", "| --- | --- | --- | --- | --- | --- |"]
+    out += [
+        "## entity の status",
+        "",
+        "| 値 | ラベル | 分類 | 並び順 | 除外範囲 | 意味 |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
     for key, m in ENTITY_STATUS.items():
-        out.append(f"| `{key}` | {m.label} | {m.category} | {m.order} | {m.exclusion} | {m.description} |")
+        out.append(
+            f"| `{key}` | {m.label} | {m.category} | {m.order} | {m.exclusion} | {m.description} |"
+        )
     return "\n".join(out) + "\n"
 
 
