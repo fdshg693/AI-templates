@@ -1,0 +1,4 @@
+# 派生キャッシュ（tools/vault/build_index.py が作り直す）
+data/vault_index.sqlite
+data/vault_index.tmp
+__pycache__/

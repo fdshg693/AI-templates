@@ -1,0 +1,87 @@
+# 自分のリポジトリに移植する手順
+
+導入手順の正本はこのファイル。
+
+## 手順
+
+1. [02-layout.md](./02-layout.md) の表を見て、採用するトップフォルダを決める（最初は `study/` だけでよい）。
+2. `references/` の**中身**を新しいリポジトリのルートにコピーする。`references/` はコピー先と同じ構造で
+   並んでいるので、パスはそのまま対応する（下の対応表）。
+3. 採用しないトップフォルダ（例: `reading/`）を削除し、ルート `README.md` の索引からも外す。
+4. `{topic}` / `{project}` という名前のフォルダを実際のテーマ名・プロジェクト名に、`{concept}` / `{question}` という
+   名前のファイルを内容に合った名前にリネームする（まだ書かないなら削除する）。
+5. 下の「置き換えるべきプレースホルダ」に沿って、ファイル本文のプレースホルダを置き換える。
+6. 検査スクリプトを新しいリポジトリに対して実行し、エラーが無くなるまで直す（スクリプトのコピーは不要）。
+
+   ```sh
+   uv run path/to/learning-template/lint_learning_repo.py path/to/new-repo
+   ```
+
+   トップフォルダ名を変えた場合は、`--study practice` のように元のパターン名のオプションで実際のフォルダ名を渡す
+   （必須ファイルの検査に使う）。
+
+7. 下のチェックリストのうち、スクリプトで確認できない項目を確認する。
+8. 実際に1つ目のトピック・プロジェクトを作り、ルート `AGENTS.md` の「各プロジェクト共通ファイル構成」
+   通りに運用できるか試す。運用しづらければ、その場で `AGENTS.md` 側のルールを直す
+   （ルールが実態と合わなくなるのが一番よくない状態）。
+
+## `references/` とコピー先の対応
+
+| `references/` 内のパス | コピー先のパス | 役割 |
+|---|---|---|
+| [`AGENTS.md`](../references/AGENTS.md) / `CLAUDE.md` / [`README.md`](../references/README.md) | `/AGENTS.md` / `/CLAUDE.md` / `/README.md` | リポジトリ全体のルールと索引（必須） |
+| [`study/AGENTS.md`](../references/study/AGENTS.md) | `study/AGENTS.md` | テーマ一覧・ユーザーの理解度 |
+| [`study/{topic}/`](../references/study/{topic}/AGENTS.md) | `study/<テーマ名>/` | テーマの現状まとめ（`AGENTS.md`）とロードマップ（`PLAN.md`） |
+| [`study/{topic}/{project}/`](../references/study/{topic}/{project}/README.md) | `study/<テーマ名>/<プロジェクト名>/` | 1プロジェクト分のファイル一式 |
+| [`reading/`](../references/reading/AGENTS.md) | `reading/`（`{topic}` はリネーム） | 座学（任意） |
+| [`sandbox/`](../references/sandbox/AGENTS.md) | `sandbox/` | ローカル検証（任意）。中身は `study/` と同じ構成で作る |
+| [`build/`](../references/build/AGENTS.md) | `build/`（`{project}` はリネーム） | 本格プロジェクト（任意） |
+| [`cheatsheet/`](../references/cheatsheet/AGENTS.md) | `cheatsheet/` | 操作リファレンス（任意） |
+
+## 置き換えるべきプレースホルダ
+
+`references/` で使う記法は2種類だけ。
+
+- **`{名前}`（置換必須）** — フォルダ名・ファイル名・本文に現れる固有名。下表のものだけを使う。
+  1つでも残っていると検査スクリプトがエラーにする。
+- **`（…）`（記入欄）** — 本文に書く内容の説明。実際の内容に置き換えるか、未着手のまま残してよい。
+
+| プレースホルダ | 意味 | 置き換え例 |
+|---|---|---|
+| `{domain}` | 学習対象の分野名（リポジトリ全体のテーマ） | `Azure`, `Rust`, `料理`, `ピアノ` |
+| `{topic}` | ドメイン内の1テーマ | `auth`, `並行処理`, `発酵` |
+| `{project}` | 1トピック内の1ステップ（`build/` では1つの成果物） | `simple`, `01-basic`, `02-advanced` |
+| `{tool}` | ツール名（ルール内では IaC・ビルドツール、`cheatsheet/` ではツール別フォルダ名） | `bicep`, `terraform`, `docker` |
+| `{concept}` | `reading/` の観点ファイル名（`overview/01-{concept}.md`） | `01-token-flow`, `01-基本用語` |
+| `{question}` | `questions/` の質問ファイル名 | `why-refresh-token`, `ロックの粒度` |
+
+トップフォルダ名（`study/`, `reading/`, `sandbox/`, `build/`, `cheatsheet/`）は好きな名前に変えてよい
+（[02-layout.md](./02-layout.md) 参照）。変えた場合は、ルートの `README.md` / `AGENTS.md` 内の記述も合わせる。
+
+## チェックリスト
+
+スクリプトで確認できる項目:
+
+- [ ] 上表のプレースホルダ（`{domain}` など）がファイル名・本文に残っていない
+- [ ] [02-layout.md](./02-layout.md) の「必須ファイル」表どおりにファイルがあり、プロジェクト階層に
+      `AGENTS.md` / `CLAUDE.md` が無い
+- [ ] Markdown の相対リンクがすべて存在するファイル・フォルダを指している
+      （使わないパターンへのリンクがルート `README.md` に残っていない）
+- [ ] 各階層の `CLAUDE.md` が `@./AGENTS.md` の1行だけで、同じフォルダに `AGENTS.md` がある
+
+人が確認する項目:
+
+- [ ] ルート `AGENTS.md` の「採用ツール方針」を自分の技術スタックに書き換えた
+- [ ] ルート `AGENTS.md` の「ガードレール」を自分の学習対象に合わせて見直した（例: 課金の発生する
+      操作、外部への副作用がある操作は明示的な許可が出るまで実行しない、等）
+- [ ] `（…）` の記入欄を、実際の内容に置き換えるか、置き換えるまでは「未着手」とわかる状態にした
+
+## やらないほうがよいこと
+
+- **`references/` の文面をそのまま流用し、ドメイン名だけ差し替えて満足しない。** 特にガードレールや
+  ツール方針は、自分の学習対象に固有のリスク・制約を反映しないと機能しない。
+- **最初から全パターン（`study`/`reading`/`sandbox`/`build`/`cheatsheet`）を用意しない。** 使わない
+  フォルダは空のまま放置されがちで、索引だけが増えて実態と乖離する。必要になってから足す。
+- **プロジェクト（ステップ）階層に個別の `AGENTS.md` を増やさない。** ルールが分散すると、
+  どの階層のルールが優先されるか曖昧になる。ルールは基本的にルート `AGENTS.md` とトピック階層の
+  3ファイルに集約する。

@@ -1,0 +1,401 @@
+"""vault フロントマタースキーマ（SSOT）.
+
+キー・型・許容値・配置パス・ステータスの意味は、このファイルだけに書く。
+- 一覧文書 docs/vault-schema.md は gen_schema_doc.py がここから生成する（手で編集しない）。
+- 読む側（validate / build_dashboard / build_index / check_entity / compact）は値のリストを書き写さず、ここから引く。
+- 型・必須・許容値の誤りはエラー、運用ルール上の推奨違反は警告（``LINTS``）。
+
+導入先のドメインに合わせて書き換える場所は「# --- 導入先で書き換える ---」の印を付けた定義。
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import StrEnum
+from typing import Any, Callable
+
+# --- 導入先で書き換える ------------------------------------------------------
+
+# 区分（scope）: 同じ構造を並列に持つ単位。vault/scopes/{scope}/ のフォルダ名と一致させる
+SCOPES: dict[str, str] = {
+    "work": "業務で使うツール・サービス",
+    "personal": "個人で使うツール・サービス",
+}
+
+KEY_PATTERN = r"^[a-z0-9]+(?:-[a-z0-9]+)*$"  # entity-key（kebab-case）
+CONTACT_KEY_PATTERN = r"^[a-z0-9]+(?:-[a-z0-9]+)*(?:_[a-z0-9]+(?:-[a-z0-9]+)*)+$"  # {org}_{name}
+
+
+class StatusCategory(StrEnum):
+    ACTIVE = "active"  # 進行中（調査・検討・試用）
+    CLOSED = "closed"  # 終了（採用・見送り・不可）
+    EXCLUDED = "excluded"  # 二度と検討しない
+
+
+class ExclusionScope(StrEnum):
+    """check_entity で「除外済み」と判定する範囲."""
+
+    NONE = "none"
+    SAME_SCOPE = "same_scope"  # 同じ scope でだけ除外（別 scope では参考提示）
+    ALL_SCOPES = "all_scopes"  # 全 scope で除外
+
+
+@dataclass(frozen=True)
+class StatusMeta:
+    label: str
+    category: StatusCategory
+    order: int  # ダッシュボードの並び順（小さいほど先）
+    exclusion: ExclusionScope
+    description: str
+
+
+# --- 導入先で書き換える ---
+ENTITY_STATUS: dict[str, StatusMeta] = {
+    "trialing": StatusMeta("試用中", StatusCategory.ACTIVE, 0, ExclusionScope.NONE, "実際に使って確かめている"),
+    "evaluating": StatusMeta("比較検討中", StatusCategory.ACTIVE, 1, ExclusionScope.NONE, "調査済みで、試すか検討中"),
+    "researching": StatusMeta("調査中", StatusCategory.ACTIVE, 2, ExclusionScope.NONE, "調査に着手したばかり・未検証"),
+    "on_hold": StatusMeta("保留", StatusCategory.ACTIVE, 3, ExclusionScope.NONE, "時期待ち等で一時停止"),
+    "adopted": StatusMeta("採用", StatusCategory.CLOSED, 10, ExclusionScope.NONE, "採用した（検討終了）"),
+    "dropped": StatusMeta("見送り", StatusCategory.CLOSED, 11, ExclusionScope.SAME_SCOPE, "自分の判断で見送った"),
+    "blocked": StatusMeta("不可", StatusCategory.CLOSED, 12, ExclusionScope.SAME_SCOPE, "外部要因で使えなかった"),
+    "blacklisted": StatusMeta("除外", StatusCategory.EXCLUDED, 20, ExclusionScope.ALL_SCOPES, "二度と検討しない"),
+}
+
+# 見送り台帳（archive.md）に畳める status。トリアージ由来のエントリは discarded
+ARCHIVABLE_STATUS = ("dropped", "blocked", "blacklisted")
+TRIAGE_STATUS = "discarded"
+TRIAGE_EXCLUSION = ExclusionScope.SAME_SCOPE
+
+EVENT_KINDS: dict[str, str] = {
+    "note": "調査メモ",
+    "meeting": "打ち合わせ・ヒアリング",
+    "trial": "試用記録",
+    "review": "レビュー・評価会",
+    "retro": "振り返り・見送りメモ",
+}
+
+EVIDENCE_LEVELS: dict[str, str] = {
+    "listing": "公開情報のみ（公式サイト・カタログ）",
+    "reviews": "第三者の評価まで（レビュー・口コミ）",
+    "web": "Web 横断（ブログ・Issue・比較記事）",
+    "firsthand": "一次情報（試用・打ち合わせ）",
+}
+
+# ダッシュボードの「最近の出来事」に出す日数と、続いている対象のイベントログを要約（digests）に畳むまでの日数
+RECENT_DAYS = 30
+EVENT_DIGEST_DAYS = 90
+
+
+def _score_cell(d: dict[str, Any]) -> str:
+    lo, hi = d.get("score_min"), d.get("score_max")
+    return "" if lo is None else f"{lo}–{hi}"
+
+
+def _cost_cell(d: dict[str, Any]) -> str:
+    lo, hi = d.get("cost_min"), d.get("cost_max")
+    if lo is None and hi is None:
+        return ""
+    return f"{lo or 0:,}〜{'' if hi is None else f'{hi:,}'}円/月"
+
+
+# ダッシュボードの「進行中の一覧」に足す題材固有の列: (見出し, entity の frontmatter → セルの文字列)
+DASHBOARD_COLUMNS: tuple[tuple[str, Callable[[dict[str, Any]], str]], ...] = (
+    ("適合度", _score_cell),
+    ("費用", _cost_cell),
+)
+# 「進行中の一覧」を小見出しで分ける entity の enum キー（分けないなら None）
+DASHBOARD_GROUP_BY: str | None = None
+
+# --- ここから下は汎用（導入先でもほぼそのまま使える） ------------------------
+
+ACTION_TYPES: dict[str, str] = {
+    "none": "タスクなし",
+    "action_required": "自分側の対応が必要",
+    "scheduled": "日時が確定した予定",
+    "waiting": "相手側の返信・結果待ち",
+}
+
+EVENT_RESULTS: dict[str, str] = {
+    "pending": "結果待ち",
+    "positive": "前向き",
+    "negative": "否定的",
+    "not_applicable": "結果の無い記録",
+}
+
+CONTACT_STATUS: dict[str, str] = {
+    "active": "やり取り中",
+    "trusted": "信頼できる情報源",
+    "declined": "やり取り終了",
+    "blacklisted": "今後関わらない",
+}
+
+RATINGS: dict[str, str] = {"S": "極めて有益", "A": "有益", "B": "普通", "C": "やや難あり", "D": "有害"}
+
+VISIBILITY: dict[str, str] = {
+    "public": "外部に出す文章の素材にしてよい",
+    "internal": "内部の判断にだけ使う（外部に出す文章に引用しない）",
+}
+
+ARCHIVED_STATUS: dict[str, str] = {
+    **{s: ENTITY_STATUS[s].label for s in ARCHIVABLE_STATUS},
+    TRIAGE_STATUS: "トリアージで打ち切り",
+}
+
+ARCHIVE_REASON_MAX = 120  # 台帳の reason は「条件の言葉で 1〜2 文」
+DIGEST_SUMMARY_MAX = 200  # digests の summary は「その期間の傾向を 2〜3 文」
+
+
+# ---------------------------------------------------------------------------
+# フィールド定義
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class F:
+    """フロントマターの1キー.
+
+    type: str | int | float | bool | date | due（日付 or 日時）| enum | list[str] | list[object]
+    """
+
+    name: str
+    type: str
+    desc: str
+    required: bool = False
+    choices: dict[str, Any] | None = None  # enum の許容値 → ラベル
+    pattern: str | None = None
+    min: float | None = None
+    max: float | None = None
+    max_len: int | None = None
+    item: tuple["F", ...] = ()  # list[object] の要素のキー
+
+
+@dataclass(frozen=True)
+class Kind:
+    """ドキュメント種別. 配置パス（glob）とキーの組."""
+
+    name: str
+    label: str
+    globs: tuple[str, ...]
+    fields: tuple[F, ...]
+    key_field: str | None = None  # 配置フォルダ名（またはファイル名）と一致させるキー
+    scope_field: str | None = None  # 配置先 scope と一致させるキー
+    event_name: bool = False  # ファイル名を {YYYY-MM-DD}_{kind}.md とし date / kind と一致させる
+    notes: tuple[str, ...] = field(default_factory=tuple)
+
+
+_TRACKING = (
+    F("updated_at", "date", "最終更新日", required=True),
+    F("tags", "list[str]", "検索用タグ"),
+)
+
+_ENTITY = Kind(
+    name="entity",
+    label="エンティティ（1件1フォルダの index.md）",
+    globs=("vault/scopes/*/entities/*/index.md",),
+    key_field="key",
+    scope_field="scope",
+    fields=(
+        F("title", "str", "正式名称", required=True),
+        F("key", "str", "kebab-case のキー。フォルダ名と一致させる", required=True, pattern=KEY_PATTERN),
+        F("aliases", "list[str]", "別名・略称・表記ゆれ（重複チェックの照合に使う）"),
+        F("scope", "enum", "区分", required=True, choices=SCOPES),
+        F("status", "enum", "現在の状態", required=True, choices={k: v.label for k, v in ENTITY_STATUS.items()}),
+        F("status_note", "str", "状態の補足（今どこで止まっているか）"),
+        F("close_reason", "str", "終了・除外した理由（closed / excluded のとき必須）"),
+        F("date", "date", "初回記録日", required=True),
+        *_TRACKING,
+        F("url", "str", "主となる参照先 URL"),
+        F("sources", "list[str]", "参照した情報源"),
+        F("evidence_level", "enum", "どこまで確かめたか", choices=EVIDENCE_LEVELS),
+        F("verified_items", "list[str]", "確認できた事項"),
+        F("unverified_items", "list[str]", "未検証・今後確かめる事項"),
+        F("score_min", "int", "適合度の下限（0〜100）", min=0, max=100),
+        F("score_max", "int", "適合度の上限（0〜100）", min=0, max=100),
+        F("score_summary", "str", "適合度の要約と、幅の理由"),
+        F("interest", "int", "本人の関心度（1〜5）。AI が推測で埋めない", min=1, max=5),
+        F("cost_min", "int", "月額費用の下限（円）", min=0),
+        F("cost_max", "int", "月額費用の上限（円）。上限なしは未記入", min=0),
+        F("cost_note", "str", "費用の補足（年払い割引・席数課金 等）"),
+        F("contact", "str", "紹介元の contact-key（パスは書かない）", pattern=CONTACT_KEY_PATTERN),
+        F("action_type", "enum", "直近アクションの種類", choices=ACTION_TYPES),
+        F("next_action", "str", "直近アクションの内容"),
+        F("next_due", "due", "期限・予定日時（YYYY-MM-DD / YYYY-MM-DD HH:MM）"),
+        F(
+            "digests",
+            "list[object]",
+            "要約に畳んだ古いイベントログ（compact.py --events が追記する）",
+            item=(
+                F("from", "date", "畳んだ期間の最初のイベントの日付", required=True),
+                F("to", "date", "畳んだ期間の最後のイベントの日付", required=True),
+                F("count", "int", "畳んだイベントログの件数", required=True, min=1),
+                F("summary", "str", "その期間の傾向（2〜3 文）", required=True, max_len=DIGEST_SUMMARY_MAX),
+            ),
+        ),
+    ),
+)
+
+_EVENT = Kind(
+    name="event",
+    label="イベントログ（1回1ファイル）",
+    globs=("vault/scopes/*/entities/*/????-??-??_*.md", "vault/contacts/*/????-??-??_*.md"),
+    event_name=True,
+    fields=(
+        F("date", "date", "実施日。ファイル名の日付と一致させる", required=True),
+        F("kind", "enum", "種類。ファイル名の後半と一致させる", required=True, choices=EVENT_KINDS),
+        F("title", "str", "表示名（標準ラベルから変えたいときだけ）"),
+        F("result", "enum", "その回の結果", choices=EVENT_RESULTS),
+        F("participants", "list[str]", "参加者・相手"),
+        *_TRACKING,
+    ),
+)
+
+_CONTACT = Kind(
+    name="contact",
+    label="コンタクト（情報をくれる人・経路。scope 横断）",
+    globs=("vault/contacts/*/index.md",),
+    key_field="contact_key",
+    fields=(
+        F("name", "str", "氏名・表示名", required=True),
+        F("contact_key", "str", "{org}_{name} 形式。フォルダ名と一致させる", required=True, pattern=CONTACT_KEY_PATTERN),
+        F("org", "str", "所属"),
+        F("scopes", "list[str]", "関わる scope"),
+        F("status", "enum", "関係の状態", required=True, choices=CONTACT_STATUS),
+        F("rating", "enum", "情報源としての評価", choices=RATINGS),
+        F(
+            "introduced",
+            "list[object]",
+            "紹介されたエンティティ",
+            item=(
+                F("name", "str", "名称", required=True),
+                F("key", "str", "エンティティのキー（ログがあれば）", pattern=KEY_PATTERN),
+                F("date", "date", "紹介日"),
+                F("note", "str", "ログを作らなかった紹介の所感"),
+            ),
+        ),
+        F("first_contact", "date", "初回接触日", required=True),
+        *_TRACKING,
+    ),
+)
+
+_TRIAGE = Kind(
+    name="triage",
+    label="トリアージ集約ログ（早期打ち切りをバッチ単位で1ファイル）",
+    globs=("vault/scopes/*/triage/*.md",),
+    scope_field="scope",
+    fields=(
+        F("date", "date", "実施日", required=True),
+        F("scope", "enum", "区分", required=True, choices=SCOPES),
+        F("topic", "str", "このバッチで何を見たか", required=True),
+        F(
+            "entries",
+            "list[object]",
+            "打ち切った対象（check_entity が照合する）",
+            required=True,
+            item=(
+                F("name", "str", "名称", required=True),
+                F("aliases", "list[str]", "別名"),
+                F("reason", "str", "打ち切った理由（条件の言葉で）", required=True),
+            ),
+        ),
+        *_TRACKING,
+    ),
+)
+
+_ARCHIVE = Kind(
+    name="archive",
+    label="見送り台帳（終了したエンティティを 1 件数行に圧縮）",
+    globs=("vault/scopes/*/archive.md",),
+    scope_field="scope",
+    fields=(
+        F("scope", "enum", "区分", required=True, choices=SCOPES),
+        F(
+            "entries",
+            "list[object]",
+            "圧縮したエンティティ",
+            item=(
+                F("name", "str", "名称", required=True),
+                F("key", "str", "元のキー（トリアージ由来なら無し）", pattern=KEY_PATTERN),
+                F("aliases", "list[str]", "別名"),
+                F("status", "enum", "元の status", required=True, choices=ARCHIVED_STATUS),
+                F("closed_at", "date", "終了日", required=True),
+                F("reason", "str", "何が合わなかったか（条件の言葉で 1〜2 文）", required=True, max_len=ARCHIVE_REASON_MAX),
+                F("reconsider_if", "str", "何が変われば再検討してよいか"),
+                F("contact", "str", "紹介元の contact-key", pattern=CONTACT_KEY_PATTERN),
+            ),
+        ),
+        *_TRACKING,
+    ),
+)
+
+_DASHBOARD = Kind(
+    name="dashboard",
+    label="ダッシュボード（一覧はマーカー間を自動生成）",
+    globs=("vault/scopes/*/dashboard.md",),
+    scope_field="scope",
+    fields=(F("scope", "enum", "区分", required=True, choices=SCOPES), *_TRACKING),
+)
+
+_NOTE = Kind(
+    name="note",
+    label="ノート（判断軸・条件など、上記以外の frontmatter 付き文書）",
+    globs=("vault/profile/**/*.md", "vault/scopes/*/README.md", "vault/scopes/*/criteria.md"),
+    fields=(
+        F("title", "str", "表題", required=True),
+        F("visibility", "enum", "公開範囲", required=True, choices=VISIBILITY),
+        *_TRACKING,
+        F("source_file", "str", "派生（翻訳・要約）元のファイル。リポジトリルート相対"),
+        F("source_updated_at", "date", "派生元の updated_at（同期した時点の値）"),
+    ),
+    notes=("source_file を書いた文書は、派生元の updated_at が source_updated_at より新しいと警告になる（同期漏れ）。",),
+)
+
+KINDS: dict[str, Kind] = {k.name: k for k in (_ENTITY, _EVENT, _CONTACT, _TRIAGE, _ARCHIVE, _DASHBOARD, _NOTE)}
+
+
+# ---------------------------------------------------------------------------
+# 運用ルールの検査（警告）
+# ---------------------------------------------------------------------------
+
+
+def _lint_entity(d: dict[str, Any]) -> tuple[list[str], list[str]]:
+    errors, warnings = [], []
+    lo, hi = d.get("score_min"), d.get("score_max")
+    if (lo is None) != (hi is None):
+        errors.append("score_min と score_max は両方記入するか、両方未記入にする")
+    elif lo is not None and hi is not None:
+        if lo > hi:
+            errors.append("score_min が score_max より大きい")
+        elif lo == hi and d.get("evidence_level") != "firsthand":
+            warnings.append("score に幅が無い。一次情報で確かめるまでは幅を持たせる")
+    cmin, cmax = d.get("cost_min"), d.get("cost_max")
+    if isinstance(cmin, int) and isinstance(cmax, int) and cmin > cmax:
+        errors.append("cost_min が cost_max より大きい")
+    meta = ENTITY_STATUS.get(d.get("status", ""))
+    if meta and meta.category != StatusCategory.ACTIVE and d.get("status") != "adopted" and not d.get("close_reason"):
+        warnings.append(f"status={d['status']} なのに close_reason が無い")
+    if d.get("action_type") in ("action_required", "scheduled") and not d.get("next_due"):
+        warnings.append(f"action_type={d['action_type']} なのに next_due が無い")
+    for i, g in enumerate(d.get("digests") or []):
+        if g["from"] > g["to"]:
+            errors.append(f"digests[{i}]: from が to より後")
+    return errors, warnings
+
+
+def _lint_event(d: dict[str, Any]) -> tuple[list[str], list[str]]:
+    return [], (["result が pending のまま。結果が出たら更新する"] if d.get("result") == "pending" else [])
+
+
+LINTS: dict[str, Callable[[dict[str, Any]], tuple[list[str], list[str]]]] = {
+    "entity": _lint_entity,
+    "event": _lint_event,
+}
+
+
+def status_meta(status: str) -> StatusMeta:
+    return ENTITY_STATUS[status]
+
+
+def exclusion_of(status: str) -> ExclusionScope:
+    if status == TRIAGE_STATUS:
+        return TRIAGE_EXCLUSION
+    return ENTITY_STATUS[status].exclusion

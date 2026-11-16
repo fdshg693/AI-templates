@@ -1,0 +1,27 @@
+# Python（同梱スクリプトの実行で生成される）
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# knowledge-vault の検索索引（validate.py などが生成するキャッシュ。正本は Markdown）
+vault_index.sqlite
+*.sqlite-journal
+
+# Claude Code の個人設定
+.claude/settings.local.json
+
+# OS・エディタ
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# threads が取り込む plans（core/plans への Junction／シンボリックリンク。core/threads/link_plans.py で作る。正本は core/plans）
+core/threads/planning/
+
+# 作業メモ（コミット対象外）
+temp/
