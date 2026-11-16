@@ -1,0 +1,17 @@
+# Junctions for opening this submodule on its own in Claude Code (created by `just links-sync`
+# at the umbrella root; never committed). `path` is relative to this repository, `target` to the
+# umbrella (fdshg693/AI). In a standalone clone the targets are missing and sync skips them;
+# run `uv run core/threads/link_plans.py` there for core/threads/planning.
+links:
+  - path: plans
+    target: plans
+    why: share implementation plans across the umbrella and submodules
+  - path: .claude/skills/committing
+    target: maintenance/plugin/skills/committing
+    why: commit procedure and lefthook wrapper (two-step submodule commit)
+  - path: _umbrella/maintenance-docs
+    target: maintenance/docs
+    why: repository conventions (repo-layout.md decides what belongs in templates/)
+  - path: core/threads/planning
+    target: templates/core/plans
+    why: threads bundles the plans template as planning/ (single source is core/plans)

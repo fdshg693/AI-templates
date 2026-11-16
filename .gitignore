@@ -1,16 +1,46 @@
-# Python（同梱スクリプトの実行で生成される）
+# Repository-level ignores. Kept in sync by hand with the umbrella's .gitignore
+# (fdshg693/AI); the umbrella's rules do not apply inside a submodule.
+
+# env / secrets
+*.env
+.env
+*.pem
+
+# Python（同梱スクリプトの実行で生成される）/ dependencies
 __pycache__/
 *.py[cod]
 .venv/
 .pytest_cache/
 .ruff_cache/
+node_modules/
+*.egg-info/
 
 # knowledge-vault の検索索引（validate.py などが生成するキャッシュ。正本は Markdown）
 vault_index.sqlite
 *.sqlite-journal
 
-# Claude Code の個人設定
+# local notes / scratch / logs（作業メモはコミット対象外）
+memo/
+temp/
+logs/
+*.log
+# skill-tools feedback (`--fb`)
+fb/
+
+# caches and local databases
+.cache/
+*.sqlite3
+.codegraph/
+.textgraph/
+
+# Claude Code: hooks installed by `just sub-agent-hooks-install` and local settings (generated)
+.claude/settings.json
 .claude/settings.local.json
+.claude/hooks/
+.claude/tasks/
+# local hook selection (the committed sample is .claude/skill-tools.hooks.example.yaml)
+.claude/skill-tools.hooks.yaml
+.skill-tools/
 
 # OS・エディタ
 .DS_Store
@@ -20,8 +50,6 @@ desktop.ini
 .idea/
 *.swp
 
-# threads が取り込む plans（core/plans への Junction／シンボリックリンク。core/threads/link_plans.py で作る。正本は core/plans）
+# threads が取り込む plans（core/plans への Junction／シンボリックリンク。アンブレラでは `just links-sync`、
+# 単体 clone では core/threads/link_plans.py で作る。正本は core/plans）
 core/threads/planning/
-
-# 作業メモ（コミット対象外）
-temp/
