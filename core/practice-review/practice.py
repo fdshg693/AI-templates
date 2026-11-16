@@ -62,7 +62,7 @@ def unique_path(folder, date, slug):
 
 def session_body(doc):
     end = lint.frontmatter_end(doc.lines)
-    return "\n".join(doc.lines[end + 1:]).strip()
+    return "\n".join(doc.lines[end + 1 :]).strip()
 
 
 def cmd_ingest(root, args):
@@ -83,15 +83,29 @@ def cmd_ingest(root, args):
             continue
         cont = next((s for s, b in bodies.items() if b and text.startswith(b)), None)
         if cont and not args.force:
-            print(f"refuse: {src.name} は {cont} の続き（再エクスポート）に見える。guides/ingesting.md を読む。取り込むなら --force")
+            print(
+                f"refuse: {src.name} は {cont} の続き（再エクスポート）に見える。guides/ingesting.md を読む。取り込むなら --force"
+            )
             status = 1
             continue
-        heading = next((m.group(1) for line in text.splitlines() if (m := re.match(r"^#\s+(.+?)\s*$", line))), None)
+        heading = next(
+            (m.group(1) for line in text.splitlines() if (m := re.match(r"^#\s+(.+?)\s*$", line))),
+            None,
+        )
         title = (heading or src.stem).replace('"', "'")
         date = args.date or datetime.date.fromtimestamp(src.stat().st_mtime).isoformat()
         dest = unique_path(root / "sessions" / date[:4], date, slugify(title))
-        front = ["---", f"type: {lint.SESSION_TYPE}", "status: unreviewed", f"date: {date}",
-                 f'title: "{title}"', f"source: {args.source}", "reviewed_in:", "---", ""]
+        front = [
+            "---",
+            f"type: {lint.SESSION_TYPE}",
+            "status: unreviewed",
+            f"date: {date}",
+            f'title: "{title}"',
+            f"source: {args.source}",
+            "reviewed_in:",
+            "---",
+            "",
+        ]
         write(dest, front + text.splitlines())
         bodies[dest.stem] = text
         src.unlink()
@@ -104,14 +118,21 @@ def cmd_pending(root, args):
     vault = lint.load_vault(root)
     pending = vault.unreviewed()
     for doc in pending[: args.limit or None]:
-        print(f"{doc.path.relative_to(root).as_posix()}\t{len(doc.lines)} lines\t{doc.get('title')}")
+        print(
+            f"{doc.path.relative_to(root).as_posix()}\t{len(doc.lines)} lines\t{doc.get('title')}"
+        )
     print(f"{len(pending)} unreviewed")
     return 0
 
 
 def output_lines(vault, folder, path, today, covers, sessions):
-    front = ["---", f"type: {lint.OUTPUT_KINDS[folder][0]}", "status: current", f"generated_at: {today}",
-             f"covers_through: {covers}"]
+    front = [
+        "---",
+        f"type: {lint.OUTPUT_KINDS[folder][0]}",
+        "status: current",
+        f"generated_at: {today}",
+        f"covers_through: {covers}",
+    ]
     if folder == "feedback":
         front.append(f"sessions: [{', '.join(d.stem for d in sessions)}]")
     front += ["superseded_by:", "---", "", "> 状態:", "", f"# {TITLES[folder]} {today}", ""]
@@ -122,7 +143,16 @@ def output_lines(vault, folder, path, today, covers, sessions):
     for name in lint.OUTPUT_KINDS[folder][2]:
         body += [f"## {name}", ""]
         if folder == "suggestions":
-            body += [f"### {lint.FILL_MARK}", "", lint.FILL_MARK, "", f"### {lint.FILL_MARK}", "", lint.FILL_MARK, ""]
+            body += [
+                f"### {lint.FILL_MARK}",
+                "",
+                lint.FILL_MARK,
+                "",
+                f"### {lint.FILL_MARK}",
+                "",
+                lint.FILL_MARK,
+                "",
+            ]
         else:
             body += [lint.FILL_MARK, ""]
     return front + body
@@ -149,7 +179,10 @@ def cmd_new(root, args):
             print("error: 未レビューのセッションが無い", file=sys.stderr)
             return 1
         if len(sessions) > lint.MAX_SESSIONS_PER_FEEDBACK:
-            print(f"error: 1ファイルで扱うセッションは {lint.MAX_SESSIONS_PER_FEEDBACK} 件まで", file=sys.stderr)
+            print(
+                f"error: 1ファイルで扱うセッションは {lint.MAX_SESSIONS_PER_FEEDBACK} 件まで",
+                file=sys.stderr,
+            )
             return 1
         done = [d.stem for d in sessions if d.get("status") == "reviewed"]
         if done:
@@ -157,7 +190,11 @@ def cmd_new(root, args):
             return 1
         covers = max(d.get("date") for d in sessions)
     elif folder == "digests":
-        current = [d.get("covers_through") for d in vault.outputs["feedback"] if states[d.path][0] == "current"]
+        current = [
+            d.get("covers_through")
+            for d in vault.outputs["feedback"]
+            if states[d.path][0] == "current"
+        ]
         covers = max(current, default=vault.latest_reviewed_date() or today)
     else:
         covers = vault.latest_reviewed_date() or today
@@ -189,7 +226,7 @@ def refresh(root):
                 lines[i] = line
             else:
                 end = lint.frontmatter_end(lines)
-                lines[end + 1:end + 1] = ["", line]
+                lines[end + 1 : end + 1] = ["", line]
             if lines != doc.lines:
                 write(doc.path, lines)
                 print(f"refresh: {doc.path.relative_to(root).as_posix()}（{status}）")
@@ -201,7 +238,9 @@ def refresh(root):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     sub = parser.add_subparsers(dest="command", required=True)
     p = sub.add_parser("ingest", help="inbox/ のエクスポートを sessions/ に取り込む")
     p.add_argument("root", type=Path)
@@ -215,11 +254,15 @@ def main():
     p.add_argument("kind", choices=sorted(KIND_FOLDERS))
     p.add_argument("root", type=Path)
     p.add_argument("--slug", required=True, help="ファイル名の後半（内容を表す短い語）")
-    p.add_argument("--sessions", help="feedback の対象（セッションのファイル名、拡張子なし、カンマ区切り）")
+    p.add_argument(
+        "--sessions", help="feedback の対象（セッションのファイル名、拡張子なし、カンマ区切り）"
+    )
     p = sub.add_parser("refresh", help="status・バナー・index.md を更新する")
     p.add_argument("root", type=Path)
     for p in sub.choices.values():
-        p.add_argument("--today", default=datetime.date.today().isoformat(), help="今日の日付 YYYY-MM-DD")
+        p.add_argument(
+            "--today", default=datetime.date.today().isoformat(), help="今日の日付 YYYY-MM-DD"
+        )
     args = parser.parse_args()
     if not args.root.is_dir():
         print(f"{args.root}: フォルダが見つからない", file=sys.stderr)

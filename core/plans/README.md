@@ -10,14 +10,14 @@
 
 1. 次を導入先リポジトリの `plans/` にコピーする。
 
-   | コピーするもの                         | 内容                                                       |
-   | -------------------------------------- | ---------------------------------------------------------- |
-   | [AGENTS.md](AGENTS.md)                 | エージェント向けの運用ルール（入口）                       |
-   | [CLAUDE.md](CLAUDE.md)                 | `@./AGENTS.md` を読み込むだけ（Claude Code 用）            |
-   | [guides/](guides)                      | 場面別ガイド（共通ルールの正本）                           |
-   | [references/](references)              | サンプル（導入先の `plans/` と同じ構造）                   |
-   | [lint_plans.py](lint_plans.py)         | frontmatter・依存関係・チェックボックス・節構成の整合チェック |
-   | [snapshot_plan.py](snapshot_plan.py)   | 初版プランを `snapshot/` に凍結                             |
+   | コピーするもの                       | 内容                                                          |
+   | ------------------------------------ | ------------------------------------------------------------- |
+   | [AGENTS.md](AGENTS.md)               | エージェント向けの運用ルール（入口）                          |
+   | [CLAUDE.md](CLAUDE.md)               | `@./AGENTS.md` を読み込むだけ（Claude Code 用）               |
+   | [guides/](guides)                    | 場面別ガイド（共通ルールの正本）                              |
+   | [references/](references)            | サンプル（導入先の `plans/` と同じ構造）                      |
+   | [lint_plans.py](lint_plans.py)       | frontmatter・依存関係・チェックボックス・節構成の整合チェック |
+   | [snapshot_plan.py](snapshot_plan.py) | 初版プランを `snapshot/` に凍結                               |
 
    この README はコピーしない。
 

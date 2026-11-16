@@ -4,12 +4,12 @@
 
 ## 構成
 
-| フォルダ | 中身 |
-| --- | --- |
-| [vault/](vault/README.md) | 情報の正本（frontmatter 付き Markdown）。地図は [vault/README.md](vault/README.md) |
-| [data/](data/README.md) | 外部から取得したスナップショット（キャッシュ）と派生索引 |
-| [docs/vault-schema.md](docs/vault-schema.md) | frontmatter のスキーマ一覧（生成物） |
-| `tools/vault/` | スキーマ（`schema.py`）と CLI |
+| フォルダ                                     | 中身                                                                               |
+| -------------------------------------------- | ---------------------------------------------------------------------------------- |
+| [vault/](vault/README.md)                    | 情報の正本（frontmatter 付き Markdown）。地図は [vault/README.md](vault/README.md) |
+| [data/](data/README.md)                      | 外部から取得したスナップショット（キャッシュ）と派生索引                           |
+| [docs/vault-schema.md](docs/vault-schema.md) | frontmatter のスキーマ一覧（生成物）                                               |
+| `tools/vault/`                               | スキーマ（`schema.py`）と CLI                                                      |
 
 ## よく使うコマンド
 

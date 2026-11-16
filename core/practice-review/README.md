@@ -22,13 +22,13 @@ inbox/ ──ingest──▶ sessions/ (unreviewed) ──review──▶ feedba
 
 1. 次を導入先リポジトリの `practice-review/` にコピーする。この README はコピーしない。
 
-   | コピーするもの | 内容 |
-   | -------------- | ---- |
-   | [AGENTS.md](AGENTS.md) | エージェント向けの運用ルール（入口） |
-   | [CLAUDE.md](CLAUDE.md) | `@./AGENTS.md` を読み込むだけ（Claude Code 用） |
-   | [guides/](guides) | 場面別ガイド（ルールの正本） |
-   | [references/](references) | 記入例（導入先の `practice-review/` と同じ構造）。`references/` のままコピーし、AGENTS.md の「サンプル」から参照する |
-   | [lint_practice_review.py](lint_practice_review.py) / [practice.py](practice.py) | 検査 / 取り込み・雛形作成・状態更新 |
+   | コピーするもの                                                                  | 内容                                                                                                                 |
+   | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+   | [AGENTS.md](AGENTS.md)                                                          | エージェント向けの運用ルール（入口）                                                                                 |
+   | [CLAUDE.md](CLAUDE.md)                                                          | `@./AGENTS.md` を読み込むだけ（Claude Code 用）                                                                      |
+   | [guides/](guides)                                                               | 場面別ガイド（ルールの正本）                                                                                         |
+   | [references/](references)                                                       | 記入例（導入先の `practice-review/` と同じ構造）。`references/` のままコピーし、AGENTS.md の「サンプル」から参照する |
+   | [lint_practice_review.py](lint_practice_review.py) / [practice.py](practice.py) | 検査 / 取り込み・雛形作成・状態更新                                                                                  |
 
 2. 作業用のファイルを作る: `references/profile.md` を `practice-review/profile.md` にコピーし、空の `practice-review/inbox/.gitkeep` を作る。`sessions/`・`feedback/`・`digests/`・`suggestions/` はスクリプトが必要になったときに作る。
 3. `practice-review/profile.md` を書き換える。「練習の設定」（練習するもの・練習相手・フィードバックの言語・母語）と「目標とレベル」を書き、「繰り返している誤り」の表の行と「定着した表現」の本文を消す。frontmatter の `updated_at` を今日に、`covers_through` を空にする。置き換えが必要な `{name}` 形式のプレースホルダは無い。

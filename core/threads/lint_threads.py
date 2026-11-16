@@ -193,7 +193,11 @@ class Linter:
                         continue
                     step_fm = parse_frontmatter(self.read(step))
                     if step_fm and "thread" in step_fm:
-                        self.error(step, "thread: は overview にだけ書く（Plan Step には書かない）", step_fm.line("thread"))
+                        self.error(
+                            step,
+                            "thread: は overview にだけ書く（Plan Step には書かない）",
+                            step_fm.line("thread"),
+                        )
                 target = overview
             elif entry.suffix == ".md" and entry.name.lower() not in PLAN_SKIP_FILES:
                 target = entry
@@ -209,7 +213,9 @@ class Linter:
         if not path.is_relative_to(self.root / PLANNING):
             return False
         parts = path.relative_to(self.root / PLANNING).parts
-        return (len(parts) == 2 and parts[1] == "00-overview.md") or (len(parts) == 1 and parts[0].endswith(".md"))
+        return (len(parts) == 2 and parts[1] == "00-overview.md") or (
+            len(parts) == 1 and parts[0].endswith(".md")
+        )
 
     # ---- threads --------------------------------------------------------
 
@@ -222,11 +228,17 @@ class Linter:
             self.error(thread_path, "frontmatter（先頭の --- ブロック）がない")
             return None
         if fm.get("type") != "Thread":
-            self.error(thread_path, f"type は 'Thread' にする（現在: {fm.get('type')!r}）", fm.line("type"))
+            self.error(
+                thread_path, f"type は 'Thread' にする（現在: {fm.get('type')!r}）", fm.line("type")
+            )
         status = fm.get("status")
         if status not in THREAD_STATUSES:
             allowed = " / ".join(sorted(THREAD_STATUSES))
-            self.error(thread_path, f"status は {allowed} のいずれか（現在: {status!r}）", fm.line("status"))
+            self.error(
+                thread_path,
+                f"status は {allowed} のいずれか（現在: {status!r}）",
+                fm.line("status"),
+            )
 
         # required sections, in order (prefix match)
         heads = self.headings(lines)
@@ -234,8 +246,12 @@ class Linter:
         for name in THREAD_SECTIONS:
             idx = next((k for k in range(pos, len(heads)) if heads[k][1].startswith(name)), None)
             if idx is None:
-                where = "がない" if not any(t.startswith(name) for _, t in heads) else "の順序が違う"
-                self.error(thread_path, f"'## {name}' 節{where}（{' → '.join(THREAD_SECTIONS)} の順）")
+                where = (
+                    "がない" if not any(t.startswith(name) for _, t in heads) else "の順序が違う"
+                )
+                self.error(
+                    thread_path, f"'## {name}' 節{where}（{' → '.join(THREAD_SECTIONS)} の順）"
+                )
             else:
                 pos = idx + 1
 
@@ -251,7 +267,11 @@ class Linter:
             line = fm.line(f"plans[{k}]")
             dest = norm(thread_path.parent / item)
             if not self.is_plan_path(dest):
-                self.error(thread_path, f"plans: は planning/{{plan}}/00-overview.md か planning/{{plan}}.md を指す: {item}", line)
+                self.error(
+                    thread_path,
+                    f"plans: は planning/{{plan}}/00-overview.md か planning/{{plan}}.md を指す: {item}",
+                    line,
+                )
                 continue
             if dest in listed:
                 self.error(thread_path, f"plans: に重複: {item}", line)
@@ -265,9 +285,17 @@ class Linter:
                 continue
             back = plan_fm.get("thread")
             if not back or isinstance(back, list) or norm(dest.parent / back) != thread_path:
-                self.error(thread_path, f"plans: の {item} に、このスレッドを指す thread: が無い（片側だけ）", line)
+                self.error(
+                    thread_path,
+                    f"plans: の {item} に、このスレッドを指す thread: が無い（片側だけ）",
+                    line,
+                )
         if status in CLOSED_STATUSES and listed:
-            self.error(thread_path, f"status が {status} なら plans: は空にする（thread-closing.md）", fm.line("plans"))
+            self.error(
+                thread_path,
+                f"status が {status} なら plans: は空にする（thread-closing.md）",
+                fm.line("plans"),
+            )
 
         # depends_on order within the thread
         index = {p: k for k, p in enumerate(listed)}
@@ -317,14 +345,24 @@ class Linter:
             self.error(log_path, "frontmatter（先頭の --- ブロック）がない")
         else:
             if fm.get("type") != "Thread Log":
-                self.error(log_path, f"type は 'Thread Log' にする（現在: {fm.get('type')!r}）", fm.line("type"))
+                self.error(
+                    log_path,
+                    f"type は 'Thread Log' にする（現在: {fm.get('type')!r}）",
+                    fm.line("type"),
+                )
             if "status" in fm:
-                self.error(log_path, "log.md に status は書かない（スレッドの status は 00-thread.md）", fm.line("status"))
+                self.error(
+                    log_path,
+                    "log.md に status は書かない（スレッドの status は 00-thread.md）",
+                    fm.line("status"),
+                )
         entries, prev = [], None
         for i, title in self.headings(lines):
             match = LOG_ENTRY.match(title)
             if not match:
-                self.error(log_path, f"エントリ見出しは '## YYYY-MM-DD [種別] 見出し' にする: {title}", i)
+                self.error(
+                    log_path, f"エントリ見出しは '## YYYY-MM-DD [種別] 見出し' にする: {title}", i
+                )
                 continue
             y, m, d, kind = match.groups()
             try:
@@ -333,9 +371,15 @@ class Linter:
                 self.error(log_path, f"日付が不正: {y}-{m}-{d}", i)
                 continue
             if kind not in LOG_KINDS:
-                self.error(log_path, f"種別は {' / '.join(sorted(LOG_KINDS))} のいずれか（現在: [{kind}]）", i)
+                self.error(
+                    log_path,
+                    f"種別は {' / '.join(sorted(LOG_KINDS))} のいずれか（現在: [{kind}]）",
+                    i,
+                )
             if prev and day < prev:
-                self.error(log_path, f"日付が昇順でない（{prev} の後に {day}）。追記のみで、末尾に足す", i)
+                self.error(
+                    log_path, f"日付が昇順でない（{prev} の後に {day}）。追記のみで、末尾に足す", i
+                )
             prev = day
             entries.append((i, kind))
         if not entries:
@@ -344,9 +388,17 @@ class Linter:
             if entries[0][1] != FIRST_KIND:
                 self.error(log_path, f"最初のエントリは [{FIRST_KIND}] にする", entries[0][0])
             if status in CLOSED_STATUSES and entries[-1][1] != DONE_KIND:
-                self.error(log_path, f"status が {status} なら最後のエントリは [{DONE_KIND}] にする", entries[-1][0])
+                self.error(
+                    log_path,
+                    f"status が {status} なら最後のエントリは [{DONE_KIND}] にする",
+                    entries[-1][0],
+                )
             if status == "closed" and not any(kind == DONE_KIND for _, kind in entries[:-1]):
-                self.error(log_path, f"closed なら最後の [{DONE_KIND}] の前に所属プランごとの [{DONE_KIND}] エントリを書く", entries[-1][0])
+                self.error(
+                    log_path,
+                    f"closed なら最後の [{DONE_KIND}] の前に所属プランごとの [{DONE_KIND}] エントリを書く",
+                    entries[-1][0],
+                )
         if status not in CLOSED_STATUSES:
             self.check_links(log_path, lines)
         self.check_placeholders(log_path, lines)
@@ -357,7 +409,10 @@ class Linter:
                 if not (self.root / name).exists():
                     self.error(self.root / name, "必須ファイルがない")
             # links in the entry files and guides (not planning/: lint_plans.py's job)
-            for path in [*sorted(self.root.glob("*.md")), *sorted((self.root / "guides").glob("*.md"))]:
+            for path in [
+                *sorted(self.root.glob("*.md")),
+                *sorted((self.root / "guides").glob("*.md")),
+            ]:
                 self.check_links(path, self.read(path).splitlines())
 
         plans = self.plan_files()
@@ -386,7 +441,9 @@ class Linter:
             listed_by = members.get(plan, [])
             if len(listed_by) > 1:
                 names = ", ".join(p.parent.name for p in listed_by)
-                self.error(plan, f"複数のスレッドの plans: に載っている（1プラン1スレッド）: {names}")
+                self.error(
+                    plan, f"複数のスレッドの plans: に載っている（1プラン1スレッド）: {names}"
+                )
             if "thread" not in fm:
                 continue
             back = fm.get("thread")
@@ -396,16 +453,28 @@ class Linter:
                 continue
             dest = norm(plan.parent / back)
             if dest.name != THREAD_FILE or dest.parent.parent != norm(topics):
-                self.error(plan, f"thread: は topics/{{thread-name}}/{THREAD_FILE} を指す: {back}", line)
+                self.error(
+                    plan, f"thread: は topics/{{thread-name}}/{THREAD_FILE} を指す: {back}", line
+                )
             elif not dest.is_file():
                 self.error(plan, f"thread: の参照先が見つからない: {back}", line)
             elif dest not in listed_by:
-                self.error(plan, f"thread: のスレッドの plans: にこのプランが無い（片側だけ）: {back}", line)
+                self.error(
+                    plan,
+                    f"thread: のスレッドの plans: にこのプランが無い（片側だけ）: {back}",
+                    line,
+                )
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("root", type=Path, help="検査するフォルダ（導入先の threads/、または --examples で references/）")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "root",
+        type=Path,
+        help="検査するフォルダ（導入先の threads/、または --examples で references/）",
+    )
     parser.add_argument("--examples", action="store_true", help="テンプレートの記入例を検査する")
     parser.add_argument("--strict", action="store_true", help="警告もエラー扱いにする")
     args = parser.parse_args()
@@ -418,7 +487,9 @@ def main():
         print(f"error: {msg}")
     for msg in linter.warnings:
         print(f"warning: {msg}")
-    print(f"{linter.checked} files checked, {len(linter.errors)} errors, {len(linter.warnings)} warnings")
+    print(
+        f"{linter.checked} files checked, {len(linter.errors)} errors, {len(linter.warnings)} warnings"
+    )
     failed = linter.errors or (args.strict and linter.warnings)
     return 1 if failed else 0
 

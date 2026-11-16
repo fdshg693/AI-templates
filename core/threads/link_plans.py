@@ -65,14 +65,22 @@ def remove_link(p: Path) -> None:
 
 def create_link(p: Path) -> None:
     if os.name == "nt":
-        subprocess.run(["cmd", "/c", "mklink", "/J", str(p), str(SOURCE)], check=True, capture_output=True)
+        subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(p), str(SOURCE)], check=True, capture_output=True
+        )
     else:
         os.symlink(POSIX_TARGET, p, target_is_directory=True)
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--check", action="store_true", help="作成・修復せず状態だけ表示する（無い・壊れていれば終了コード1）")
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    ap.add_argument(
+        "--check",
+        action="store_true",
+        help="作成・修復せず状態だけ表示する（無い・壊れていれば終了コード1）",
+    )
     args = ap.parse_args()
 
     if not SOURCE.is_dir():
@@ -89,10 +97,16 @@ def main() -> int:
         remove_link(LINK)
         print(f"removed broken link: {LINK}")
     elif LINK.exists():
-        print(f"error: {LINK} はリンクではない実体。消さずに中止する（中身を確認して手で移動・削除すること）", file=sys.stderr)
+        print(
+            f"error: {LINK} はリンクではない実体。消さずに中止する（中身を確認して手で移動・削除すること）",
+            file=sys.stderr,
+        )
         return 1
     elif args.check:
-        print(f"missing: {LINK} が無い。`uv run core/threads/link_plans.py` を実行する", file=sys.stderr)
+        print(
+            f"missing: {LINK} が無い。`uv run core/threads/link_plans.py` を実行する",
+            file=sys.stderr,
+        )
         return 1
 
     create_link(LINK)

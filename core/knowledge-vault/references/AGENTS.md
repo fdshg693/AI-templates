@@ -2,13 +2,13 @@
 
 このリポジトリは（何の情報を集めるリポジトリか）。情報の正本は `vault/`、道具は `tools/`、外部から取ってきたスナップショットは `data/` に置く。
 
-| フォルダ | 中身 | 書き換えてよいか |
-| --- | --- | --- |
-| `vault/` | 正本（frontmatter 付き Markdown） | 運用ルール [vault/AGENTS.md](vault/AGENTS.md) に従って書く |
-| `data/{source}/` | 外部から取得したスナップショット | 取得スクリプトだけが書く。判断・経緯は書かない |
-| `data/vault_index.sqlite` | 検索用の派生索引 | 直接書かない。`build_index.py` が作り直す |
-| `docs/vault-schema.md` | スキーマ一覧（生成物） | 直接書かない。`gen_schema_doc.py` が作る |
-| `tools/vault/` | スキーマ（`schema.py`）と CLI | スキーマを変えるときは下の手順に従う |
+| フォルダ                  | 中身                              | 書き換えてよいか                                           |
+| ------------------------- | --------------------------------- | ---------------------------------------------------------- |
+| `vault/`                  | 正本（frontmatter 付き Markdown） | 運用ルール [vault/AGENTS.md](vault/AGENTS.md) に従って書く |
+| `data/{source}/`          | 外部から取得したスナップショット  | 取得スクリプトだけが書く。判断・経緯は書かない             |
+| `data/vault_index.sqlite` | 検索用の派生索引                  | 直接書かない。`build_index.py` が作り直す                  |
+| `docs/vault-schema.md`    | スキーマ一覧（生成物）            | 直接書かない。`gen_schema_doc.py` が作る                   |
+| `tools/vault/`            | スキーマ（`schema.py`）と CLI     | スキーマを変えるときは下の手順に従う                       |
 
 ### `vault/` を読み書きするとき
 

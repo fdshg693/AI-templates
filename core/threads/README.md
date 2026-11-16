@@ -10,13 +10,13 @@
 
 1. 導入先リポジトリに `threads/` を作り、次をコピーする。
 
-   | コピーするもの | コピー先 | 内容 |
-   | -------------- | -------- | ---- |
-   | [AGENTS.md](AGENTS.md) | `threads/` | エージェント向けの運用ルール（入口） |
-   | [CLAUDE.md](CLAUDE.md) | `threads/` | `@./AGENTS.md` を読み込むだけ（Claude Code 用） |
-   | [guides/](guides) | `threads/` | 場面別ガイド（ルールの正本） |
-   | [references/](references) | `threads/` | 記入例（導入先の `threads/` と同じ構造） |
-   | [lint_threads.py](lint_threads.py) | `threads/` | スレッドとプランの関連付けの検査 |
+   | コピーするもの                     | コピー先            | 内容                                                                               |
+   | ---------------------------------- | ------------------- | ---------------------------------------------------------------------------------- |
+   | [AGENTS.md](AGENTS.md)             | `threads/`          | エージェント向けの運用ルール（入口）                                               |
+   | [CLAUDE.md](CLAUDE.md)             | `threads/`          | `@./AGENTS.md` を読み込むだけ（Claude Code 用）                                    |
+   | [guides/](guides)                  | `threads/`          | 場面別ガイド（ルールの正本）                                                       |
+   | [references/](references)          | `threads/`          | 記入例（導入先の `threads/` と同じ構造）                                           |
+   | [lint_threads.py](lint_threads.py) | `threads/`          | スレッドとプランの関連付けの検査                                                   |
    | plans の導入手順の表にあるもの一式 | `threads/planning/` | プランの書式・ガイド・スクリプト（[plans の README](../plans/README.md#導入手順)） |
 
    この README と `link_plans.py`（テンプレート集の中でだけ使う）はコピーしない。テンプレート集のルートからなら次のとおり。
@@ -28,6 +28,7 @@
    ```
 
    テンプレート集の `core/threads/planning/` は `core/plans` への Junction（コミットされていない）。`core/threads` をフォルダごとコピーした場合も、2回目のコピーで `threads/planning/` が実体の plans で埋まるので結果は同じになる（その場合は `README.md`・`link_plans.py` を消す）。
+
 2. （任意）plans の README の手順2に従い、Claude Code 用の進め方を `threads/planning/AGENTS.md` の「導入先固有の運用」節へ書き写す。
 3. ルートの `AGENTS.md`（または `CLAUDE.md`）に「プランの作成・実行と、複数プランにまたがる作業は `threads/AGENTS.md` に従う」と1行足す（Claude Code ならルート `CLAUDE.md` に `@threads/AGENTS.md` でもよい）。サブフォルダの AGENTS.md は、ルートで作業するエージェントに自動では読まれないため。
 4. リポジトリのルートで検査を実行し、エラーが出ないことを確認する（標準ライブラリのみ。`uv` が無ければ `python` でよい）。

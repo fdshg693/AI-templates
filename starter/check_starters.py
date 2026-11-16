@@ -74,7 +74,10 @@ def matches(name, patterns):
 def lint_commands(value):
     """Return the lint commands as argv lists. Plain script commands run with this Python."""
     commands = parse_list(value) or [value]
-    return [cmd.split() if cmd.split()[0] == "uv" else [sys.executable, *cmd.split()] for cmd in commands]
+    return [
+        cmd.split() if cmd.split()[0] == "uv" else [sys.executable, *cmd.split()]
+        for cmd in commands
+    ]
 
 
 def first_missing_line(core_lines, starter_lines):
@@ -118,7 +121,11 @@ def check_starter(starter, sync):
 
     for src in sorted(source.rglob("*")):
         relative = src.relative_to(source)
-        if src.is_dir() or src.relative_to(template).as_posix() in NOT_COPIED or IGNORED_PARTS & set(relative.parts):
+        if (
+            src.is_dir()
+            or src.relative_to(template).as_posix() in NOT_COPIED
+            or IGNORED_PARTS & set(relative.parts)
+        ):
             continue
         dest = installed / relative
         name = relative.as_posix()
@@ -139,24 +146,43 @@ def check_starter(starter, sync):
             core_lines = src.read_text(encoding="utf-8").splitlines()
             index = first_missing_line(core_lines, dest.read_text(encoding="utf-8").splitlines())
             if index is not None:
-                problems.append(f"{rel(dest)}:1: extended のファイルは core の内容に追記だけできる。core の {index + 1} 行目が無いか順序が違う")
+                problems.append(
+                    f"{rel(dest)}:1: extended のファイルは core の内容に追記だけできる。core の {index + 1} 行目が無いか順序が違う"
+                )
         elif dest.read_bytes() != src.read_bytes():
-            problems.append(f"{rel(dest)}:1: core/{core_name} と内容が違う（core を直して --sync する）")
+            problems.append(
+                f"{rel(dest)}:1: core/{core_name} と内容が違う（core を直して --sync する）"
+            )
 
     for command in lint_commands(manifest["lint"]):
-        result = subprocess.run(command, cwd=starter, capture_output=True, text=True, encoding="utf-8")
+        result = subprocess.run(
+            command, cwd=starter, capture_output=True, text=True, encoding="utf-8"
+        )
         if result.returncode != 0:
             output = (result.stdout + result.stderr).strip()
-            problems.append(f"{rel(manifest_path)}:1: lint が失敗した（{' '.join(command[1:] if command[0] == sys.executable else command)}）\n{output}")
+            problems.append(
+                f"{rel(manifest_path)}:1: lint が失敗した（{' '.join(command[1:] if command[0] == sys.executable else command)}）\n{output}"
+            )
     return problems
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("starters", nargs="*", type=Path, help="検査するスターター（省略時は starter/ 直下のすべて）")
-    parser.add_argument("--sync", action="store_true", help="core の変更をスターターのコピーへ反映してから検査する")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "starters",
+        nargs="*",
+        type=Path,
+        help="検査するスターター（省略時は starter/ 直下のすべて）",
+    )
+    parser.add_argument(
+        "--sync", action="store_true", help="core の変更をスターターのコピーへ反映してから検査する"
+    )
     args = parser.parse_args()
-    starters = [p.resolve() for p in args.starters] or sorted(p.parent for p in HERE.glob("*/STARTER.md"))
+    starters = [p.resolve() for p in args.starters] or sorted(
+        p.parent for p in HERE.glob("*/STARTER.md")
+    )
     problems = []
     for starter in starters:
         if not (starter / "STARTER.md").is_file():

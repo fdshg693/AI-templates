@@ -42,7 +42,9 @@ MANIFEST_NAME = "README.md"
 PLAN_FILE_PATTERN = re.compile(r"^\d{2}-.+\.md$")
 # The initial snapshot (and --force) belong before execution starts.
 BEFORE_EXECUTION_STATUSES = {"planning-research", "planning-breakdown", "ready"}
-LATE_NOTE = "\n>\n> **実行開始後に取得（初版ではない）。** 取得時点の overview status: `{status}`\n>"
+LATE_NOTE = (
+    "\n>\n> **実行開始後に取得（初版ではない）。** 取得時点の overview status: `{status}`\n>"
+)
 
 MANIFEST_TEMPLATE = """# snapshot/ - `{plan_name}` の初版プラン凍結コピー
 

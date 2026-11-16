@@ -44,7 +44,9 @@ class Match:
 
     def verdict(self, scope: str) -> str:
         excl = exclusion_of(self.status)
-        if excl == ExclusionScope.ALL_SCOPES or (excl == ExclusionScope.SAME_SCOPE and self.scope == scope):
+        if excl == ExclusionScope.ALL_SCOPES or (
+            excl == ExclusionScope.SAME_SCOPE and self.scope == scope
+        ):
             return "EXCLUDED"
         if self.scope != scope:
             return "OTHER SCOPE"
@@ -64,15 +66,34 @@ def find(query: str, scope: str, root: Path) -> list[Match]:
             matches.append(Match(exact=False, **kw))
 
     for d in vault.of("entity"):
-        consider([d.get("title", ""), d.folder_key or "", *(d.get("aliases") or [])], name=d.get("title", d.folder_key),
-                 scope=d.scope, status=d.get("status", "researching"), path=d.rel, reason=d.get("close_reason"))
+        consider(
+            [d.get("title", ""), d.folder_key or "", *(d.get("aliases") or [])],
+            name=d.get("title", d.folder_key),
+            scope=d.scope,
+            status=d.get("status", "researching"),
+            path=d.rel,
+            reason=d.get("close_reason"),
+        )
     for d in vault.of("triage"):
         for e in d.get("entries") or []:
-            consider([e.get("name", ""), *(e.get("aliases") or [])], name=e.get("name"), scope=d.scope,
-                     status=TRIAGE_STATUS, path=d.rel, reason=e.get("reason"))
+            consider(
+                [e.get("name", ""), *(e.get("aliases") or [])],
+                name=e.get("name"),
+                scope=d.scope,
+                status=TRIAGE_STATUS,
+                path=d.rel,
+                reason=e.get("reason"),
+            )
     for d, e in vault.archived_entries():
-        consider([e.get("name", ""), e.get("key") or "", *(e.get("aliases") or [])], name=e.get("name"), scope=d.scope,
-                 status=e.get("status"), path=d.rel, reason=e.get("reason"), reconsider_if=e.get("reconsider_if"))
+        consider(
+            [e.get("name", ""), e.get("key") or "", *(e.get("aliases") or [])],
+            name=e.get("name"),
+            scope=d.scope,
+            status=e.get("status"),
+            path=d.rel,
+            reason=e.get("reason"),
+            reconsider_if=e.get("reconsider_if"),
+        )
     return [m for m in matches if m.status in ENTITY_STATUS or m.status == TRIAGE_STATUS]
 
 

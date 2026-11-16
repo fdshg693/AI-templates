@@ -24,14 +24,14 @@ vault/
 
 ## 入口
 
-| 知りたいこと | 見る場所 |
-| --- | --- |
-| 最近何をしているか・次の予定 | [scopes/life/dashboard.md](scopes/life/dashboard.md) |
+| 知りたいこと                               | 見る場所                                                                                                   |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| 最近何をしているか・次の予定               | [scopes/life/dashboard.md](scopes/life/dashboard.md)                                                       |
 | どんな人か・何が好きか（変わりにくいこと） | [profile/](profile/about.md)（[preferences.md](profile/preferences.md)・[routine.md](profile/routine.md)） |
-| ある活動の経緯 | `scopes/life/entities/{key}/index.md`（古い経緯は frontmatter の `digests`） |
-| やめた・合わなかった理由 | [scopes/life/archive.md](scopes/life/archive.md)（または `uv run tools/vault/check_entity.py`） |
-| 仕事だけ・趣味だけ見たい | `uv run tools/vault/build_index.py --where area=hobby -s` |
-| 横断検索したい | `uv run tools/vault/build_index.py -q <キーワード>`（ヒットした正本のパスを返す） |
-| フロントマターに何を書けるか | [docs/vault-schema.md](../docs/vault-schema.md)（正は `tools/vault/schema.py`） |
+| ある活動の経緯                             | `scopes/life/entities/{key}/index.md`（古い経緯は frontmatter の `digests`）                               |
+| やめた・合わなかった理由                   | [scopes/life/archive.md](scopes/life/archive.md)（または `uv run tools/vault/check_entity.py`）            |
+| 仕事だけ・趣味だけ見たい                   | `uv run tools/vault/build_index.py --where area=hobby -s`                                                  |
+| 横断検索したい                             | `uv run tools/vault/build_index.py -q <キーワード>`（ヒットした正本のパスを返す）                          |
+| フロントマターに何を書けるか               | [docs/vault-schema.md](../docs/vault-schema.md)（正は `tools/vault/schema.py`）                            |
 
 運用ルールは [AGENTS.md](AGENTS.md)。

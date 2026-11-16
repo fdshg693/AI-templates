@@ -13,15 +13,15 @@ lint: decisions/lint_decisions.py decisions
 
 core の `references/` は「判断1件」と「それを置き換えた判断1件」だけを示す。このスターターは、判断が積み重なったときに出てくる次の状況を含む。
 
-| 状況 | ファイル |
-| ---- | -------- |
-| 見直し条件を満たして置き換えられた判断 | [0002](decisions/0002-store-data-in-sqlite.md) → [0006](decisions/0006-move-to-postgresql-with-uuid.md) |
-| 1つの判断で複数の判断をまとめて置き換える | [0006](decisions/0006-move-to-postgresql-with-uuid.md)（`supersedes: [0002, 0004]`） |
-| 置き換えを提案したが不採用になり、元の判断がそのまま残る | [0007](decisions/0007-rewrite-api-in-typescript.md)（`rejected`、`supersedes: [0001]`）と [0001](decisions/0001-use-python-fastapi.md) |
-| 置き換えを提案中で、元の判断はまだ `accepted` | [0008](decisions/0008-job-queue-on-postgresql.md)（`proposed`、`supersedes: [0003]`）と [0003](decisions/0003-send-notifications-in-process.md) |
-| 置き換えと無関係に有効なままの判断 | [0005](decisions/0005-error-responses-problem-details.md) |
-| 導入先固有の運用（判断の持ち主・レビュー依頼先）を書き足した入口 | [decisions/AGENTS.md](decisions/AGENTS.md) の「導入先固有の運用」節 |
-| ルートの指示ファイルから decisions への1行の導線 | [AGENTS.md](AGENTS.md) |
+| 状況                                                             | ファイル                                                                                                                                        |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| 見直し条件を満たして置き換えられた判断                           | [0002](decisions/0002-store-data-in-sqlite.md) → [0006](decisions/0006-move-to-postgresql-with-uuid.md)                                         |
+| 1つの判断で複数の判断をまとめて置き換える                        | [0006](decisions/0006-move-to-postgresql-with-uuid.md)（`supersedes: [0002, 0004]`）                                                            |
+| 置き換えを提案したが不採用になり、元の判断がそのまま残る         | [0007](decisions/0007-rewrite-api-in-typescript.md)（`rejected`、`supersedes: [0001]`）と [0001](decisions/0001-use-python-fastapi.md)          |
+| 置き換えを提案中で、元の判断はまだ `accepted`                    | [0008](decisions/0008-job-queue-on-postgresql.md)（`proposed`、`supersedes: [0003]`）と [0003](decisions/0003-send-notifications-in-process.md) |
+| 置き換えと無関係に有効なままの判断                               | [0005](decisions/0005-error-responses-problem-details.md)                                                                                       |
+| 導入先固有の運用（判断の持ち主・レビュー依頼先）を書き足した入口 | [decisions/AGENTS.md](decisions/AGENTS.md) の「導入先固有の運用」節                                                                             |
+| ルートの指示ファイルから decisions への1行の導線                 | [AGENTS.md](AGENTS.md)                                                                                                                          |
 
 現在有効な判断は `accepted` の 0001・0003・0005・0006。
 

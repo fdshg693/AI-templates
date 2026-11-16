@@ -52,7 +52,13 @@ PLAN_SECTIONS = [
     "## 未決事項と引継ぎ",
 ]
 # Headings required by guides/plan-format.md (ラフ案の status).
-ROUGH_SECTIONS = ["## 依頼の原文", "## 何をしたいか", "## まだ決めていないこと", "## 次にすること", "## 詳細計画への移行先"]
+ROUGH_SECTIONS = [
+    "## 依頼の原文",
+    "## 何をしたいか",
+    "## まだ決めていないこと",
+    "## 次にすること",
+    "## 詳細計画への移行先",
+]
 ROUGH_TARGET = "## 詳細計画への移行先"
 # Headings of the shipped asis.md that the workflow relies on.
 ASIS_SECTIONS = ["## 現在地", "## 次に行うこと", "## ブロッカーと確認待ち"]
@@ -146,7 +152,9 @@ class Linter:
             return None
         type_value, type_line = fm.get("type", (None, 1))
         if type_value != expected_type:
-            self.error(path, f"type は '{expected_type}' であるべき（実際: {type_value!r}）", type_line)
+            self.error(
+                path, f"type は '{expected_type}' であるべき（実際: {type_value!r}）", type_line
+            )
         status, status_line = fm.get("status", (None, 1))
         if status not in statuses:
             allowed = " / ".join(sorted(statuses))
@@ -161,7 +169,10 @@ class Linter:
             self.warn(path, "ファイル名は {MM}-{slice}.md（例: 01-first-slice.md）にする")
         status = self.check_frontmatter(path, lines, PLAN_TYPE, PLAN_STATUSES)
         if snapshot and status and status != snapshot:
-            self.error(path, f"記入例の status は時点フォルダ名 '{snapshot}' と同じにする（実際: {status!r}）")
+            self.error(
+                path,
+                f"記入例の status は時点フォルダ名 '{snapshot}' と同じにする（実際: {status!r}）",
+            )
         self.check_sections(path, lines, PLAN_SECTIONS)
         if status != "complete":
             return status
@@ -183,7 +194,9 @@ class Linter:
         if status == "promoted" and target:
             start, end = target
             if not any(LINK.search(line) for line in lines[start:end]):
-                self.error(path, f"promoted のラフ案は '{ROUGH_TARGET}' に計画へのリンクを書く", start)
+                self.error(
+                    path, f"promoted のラフ案は '{ROUGH_TARGET}' に計画へのリンクを書く", start
+                )
 
     def lint_asis(self):
         path = self.root / "asis.md"
@@ -243,7 +256,11 @@ class Linter:
             seen.add(phase)
             plans = statuses.get(phase, [])
             if state not in PHASE_STATES:
-                self.error(path, f"状態は {' / '.join(sorted(PHASE_STATES))} のいずれか（実際: {state!r}）", i)
+                self.error(
+                    path,
+                    f"状態は {' / '.join(sorted(PHASE_STATES))} のいずれか（実際: {state!r}）",
+                    i,
+                )
             elif state == "未開始" and plans:
                 self.error(path, f"{phase}/ に計画があるのに '未開始'", i)
             elif state == "完了" and not self.phase_complete(plans):
@@ -284,9 +301,13 @@ class Linter:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("plans_dir", type=Path, help="repo-plans フォルダ（--examples では記入例のフォルダ）")
+    parser.add_argument(
+        "plans_dir", type=Path, help="repo-plans フォルダ（--examples では記入例のフォルダ）"
+    )
     parser.add_argument("--strict", action="store_true", help="警告でも非0で終了する")
-    parser.add_argument("--examples", action="store_true", help="テンプレートの記入例として検査する")
+    parser.add_argument(
+        "--examples", action="store_true", help="テンプレートの記入例として検査する"
+    )
     args = parser.parse_args()
     if not args.plans_dir.is_dir():
         print(f"error: not a directory: {args.plans_dir}", file=sys.stderr)
@@ -297,7 +318,9 @@ def main():
         print(f"warn : {line}")
     for line in linter.errors:
         print(f"error: {line}")
-    print(f"checked {linter.checked} plan(s): {len(linter.errors)} error(s), {len(linter.warnings)} warning(s)")
+    print(
+        f"checked {linter.checked} plan(s): {len(linter.errors)} error(s), {len(linter.warnings)} warning(s)"
+    )
     return 1 if linter.errors or (args.strict and linter.warnings) else 0
 
 

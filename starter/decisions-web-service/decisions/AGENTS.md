@@ -4,11 +4,11 @@
 
 作業を始める前に、場面に対応するファイルを読む。
 
-| 場面 | 読む場所 |
-| ---- | -------- |
-| 判断を書く・提案する（`proposed` → `accepted` / `rejected`） | [guides/decision-writing.md](guides/decision-writing.md) |
-| 既存の `accepted` の判断を覆す・変える | [guides/superseding.md](guides/superseding.md)（書式は decision-writing.md） |
-| コードを変える前に、関係する判断を確かめる | このフォルダの `status: accepted` のファイルの `## 決定` だけを読む |
+| 場面                                                         | 読む場所                                                                     |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| 判断を書く・提案する（`proposed` → `accepted` / `rejected`） | [guides/decision-writing.md](guides/decision-writing.md)                     |
+| 既存の `accepted` の判断を覆す・変える                       | [guides/superseding.md](guides/superseding.md)（書式は decision-writing.md） |
+| コードを変える前に、関係する判断を確かめる                   | このフォルダの `status: accepted` のファイルの `## 決定` だけを読む          |
 
 ## 不変条件
 
@@ -28,9 +28,9 @@
 
 書こうとしているファイルに対応するサンプルだけを読み、書式と粒度をそろえる。`references/` は導入先の `decisions/` と同じ構造。
 
-| 書くもの | サンプル |
-| -------- | -------- |
-| 新しい判断（`accepted`） | [references/0002-move-settings-to-toml.md](references/0002-move-settings-to-toml.md)（既存の判断を置き換える例を兼ねる） |
+| 書くもの                           | サンプル                                                                                                                             |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 新しい判断（`accepted`）           | [references/0002-move-settings-to-toml.md](references/0002-move-settings-to-toml.md)（既存の判断を置き換える例を兼ねる）             |
 | 置き換えられた判断（`superseded`） | [references/0001-store-settings-in-ini.md](references/0001-store-settings-in-ini.md)（frontmatter だけが変わり、本文は採用時のまま） |
 
 新しい判断を書き始めるときは `status: proposed`、`supersedes: []`、`superseded_by: []` にする。

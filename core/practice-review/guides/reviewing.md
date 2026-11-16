@@ -31,6 +31,7 @@
    ```
 
    途中でやめる場合は、作った Feedback を削除し、対象セッションの `status` を `unreviewed`、`reviewed_in` を空に戻して `practice.py refresh` を実行する。
+
 5. `（記入）` を埋める。各節の書き方と行数の上限は [formats.md「本文の節」](formats.md#本文の節)。
 6. `profile.md` を更新する。
    - 「繰り返している誤り」: 今回出たパターンの回数と「最後に出た」を更新する。新しいパターンは行を足す。

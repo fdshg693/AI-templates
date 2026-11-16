@@ -25,7 +25,9 @@ NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
 def agents_md(name, lint, guides):
-    scene_rows = "\n".join(f"| TODO: 場面（{g}） | [guides/{g}.md](guides/{g}.md) |" for g in guides)
+    scene_rows = "\n".join(
+        f"| TODO: 場面（{g}） | [guides/{g}.md](guides/{g}.md) |" for g in guides
+    )
     return f"""## `{name}` の作業規約
 
 TODO: このテンプレートで行う作業と対象外を1〜2文で書く。（README.md は導入先にコピーしないので、ここからリンクしない）
@@ -145,9 +147,13 @@ TODO: 架空の題材で、そのまま読める完成状態の記入例を書�
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("target", type=Path, help="作成するフォルダ（例: core/my-template）")
-    parser.add_argument("--guides", default="format", help="作るガイドのファイル名（拡張子なし、カンマ区切り）")
+    parser.add_argument(
+        "--guides", default="format", help="作るガイドのファイル名（拡張子なし、カンマ区切り）"
+    )
     parser.add_argument("--lint-name", help="lint スクリプト名（既定: lint_<snake>.py）")
     parser.add_argument("--dry-run", action="store_true", help="作成するファイルを表示するだけ")
     args = parser.parse_args()

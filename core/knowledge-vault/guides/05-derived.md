@@ -2,11 +2,11 @@
 
 正本（`vault/` の Markdown）だけを更新すれば、ほかはすべて追随する形にする。派生物は直接編集せず、消しても作り直せるようにしておく。
 
-| 派生物 | 作る道具 | 作り直すタイミング |
-| --- | --- | --- |
-| ダッシュボードの一覧 | `build_dashboard.py` | vault を書いた後に毎回 |
-| スキーマ一覧 `docs/vault-schema.md` | `gen_schema_doc.py` | `schema.py` を変えたとき（commit フックで差分検査） |
-| 検索索引 `data/vault_index.sqlite` | `build_index.py` | 読む側が `ensure_index()` を呼ぶと、正本が変わっていたときだけ自動で |
+| 派生物                              | 作る道具             | 作り直すタイミング                                                   |
+| ----------------------------------- | -------------------- | -------------------------------------------------------------------- |
+| ダッシュボードの一覧                | `build_dashboard.py` | vault を書いた後に毎回                                               |
+| スキーマ一覧 `docs/vault-schema.md` | `gen_schema_doc.py`  | `schema.py` を変えたとき（commit フックで差分検査）                  |
+| 検索索引 `data/vault_index.sqlite`  | `build_index.py`     | 読む側が `ensure_index()` を呼ぶと、正本が変わっていたときだけ自動で |
 
 ## ダッシュボード: 生成区間と手書き区間を分ける
 

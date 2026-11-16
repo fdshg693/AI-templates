@@ -4,17 +4,17 @@
 
 計画を新規作成・更新・実行する前に、現在の場面に対応するファイルを読む。
 
-| 場面                                                     | 読む場所                                                                                                      |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| 作業を始める・再開する                                   | [asis.md](asis.md)、[phase-status.md](phase-status.md)                                                        |
-| 計画ファイルを作る（ファイル名、frontmatter、`status`）  | [plan-format.md](guides/plan-format.md)、[plan-skeleton.md](guides/plan-skeleton.md)    |
-| ラフ案（仮説・着想）を書く                               | [plan-format.md の「ラフ案の status」](guides/plan-format.md#ラフ案の-status)                      |
-| 仕様・技術を確定する                                     | [01-specification-and-technology.md](guides/01-specification-and-technology.md)                    |
-| 最小の縦切りを実装・検証する                             | [02-minimal-delivery.md](guides/02-minimal-delivery.md)                                            |
-| ドキュメント、ルール、スキルの基盤を定着する             | [03-foundation.md](guides/03-foundation.md)                                                        |
-| ユーザーへの質問、レビュー依頼、フィードバック反映を行う | [interaction-loop.md](guides/interaction-loop.md)                                                  |
-| 計画を `complete` にする                                 | [phase-gate.md](guides/phase-gate.md)                                                              |
-| 3フェーズを通した記入例を見る                            | [references/](references/README.md)                                                         |
+| 場面                                                     | 読む場所                                                                             |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 作業を始める・再開する                                   | [asis.md](asis.md)、[phase-status.md](phase-status.md)                               |
+| 計画ファイルを作る（ファイル名、frontmatter、`status`）  | [plan-format.md](guides/plan-format.md)、[plan-skeleton.md](guides/plan-skeleton.md) |
+| ラフ案（仮説・着想）を書く                               | [plan-format.md の「ラフ案の status」](guides/plan-format.md#ラフ案の-status)        |
+| 仕様・技術を確定する                                     | [01-specification-and-technology.md](guides/01-specification-and-technology.md)      |
+| 最小の縦切りを実装・検証する                             | [02-minimal-delivery.md](guides/02-minimal-delivery.md)                              |
+| ドキュメント、ルール、スキルの基盤を定着する             | [03-foundation.md](guides/03-foundation.md)                                          |
+| ユーザーへの質問、レビュー依頼、フィードバック反映を行う | [interaction-loop.md](guides/interaction-loop.md)                                    |
+| 計画を `complete` にする                                 | [phase-gate.md](guides/phase-gate.md)                                                |
+| 3フェーズを通した記入例を見る                            | [references/](references/README.md)                                                  |
 
 ### リポジトリのルートと配置
 

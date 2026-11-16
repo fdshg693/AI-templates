@@ -57,7 +57,9 @@ def is_link_dir(p: Path) -> bool:
         st = os.lstat(p)
     except OSError:
         return False
-    return stat.S_ISLNK(st.st_mode) or getattr(st, "st_reparse_tag", 0) == IO_REPARSE_TAG_MOUNT_POINT
+    return (
+        stat.S_ISLNK(st.st_mode) or getattr(st, "st_reparse_tag", 0) == IO_REPARSE_TAG_MOUNT_POINT
+    )
 
 
 def iter_files(root: Path):
@@ -119,16 +121,27 @@ def inspect(root: Path) -> dict:
     entry = {}
     for name in ("README.md", "AGENTS.md", "CLAUDE.md"):
         p = root / name
-        entry[name] = {"exists": p.exists(), "lines": len(read(p).splitlines()) if p.exists() else 0}
+        entry[name] = {
+            "exists": p.exists(),
+            "lines": len(read(p).splitlines()) if p.exists() else 0,
+        }
     claude = root / "CLAUDE.md"
     if claude.exists():
-        body = [line for line in read(claude).splitlines() if line.strip() and not line.strip().startswith("<!--")]
+        body = [
+            line
+            for line in read(claude).splitlines()
+            if line.strip() and not line.strip().startswith("<!--")
+        ]
         entry["CLAUDE.md"]["imports"] = IMPORT_RE.findall(read(claude))
         entry["CLAUDE.md"]["alias_only"] = all(line.startswith("@") for line in body)
     result["entry_points"] = entry
 
     # --- always loaded cost ----------------------------------------------
-    loaded, seen, queue = 0, set(), deque(p for p in (root / "AGENTS.md", root / "CLAUDE.md") if p.exists())
+    loaded, seen, queue = (
+        0,
+        set(),
+        deque(p for p in (root / "AGENTS.md", root / "CLAUDE.md") if p.exists()),
+    )
     while queue:
         p = queue.popleft().resolve()
         if p in seen or not p.exists():
@@ -179,7 +192,9 @@ def inspect(root: Path) -> dict:
                     q.append(nxt)
         return dist
 
-    from_agents = hops_from(root / "AGENTS.md") if (root / "AGENTS.md").exists() else hops_from(claude)
+    from_agents = (
+        hops_from(root / "AGENTS.md") if (root / "AGENTS.md").exists() else hops_from(claude)
+    )
     from_readme = hops_from(root / "README.md")
     reach = {}
     entry_names = {"README.md", "AGENTS.md", "CLAUDE.md"}
@@ -189,9 +204,13 @@ def inspect(root: Path) -> dict:
         r = md.resolve()
         reach[rel(md, root)] = {"agents": from_agents.get(r), "readme": from_readme.get(r)}
     result["reachability"] = {
-        "unreachable_from_any": sorted(k for k, v in reach.items() if v["agents"] is None and v["readme"] is None),
+        "unreachable_from_any": sorted(
+            k for k, v in reach.items() if v["agents"] is None and v["readme"] is None
+        ),
         "unreachable_from_agents": sorted(k for k, v in reach.items() if v["agents"] is None),
-        "max_hops_from_agents": max((v["agents"] for v in reach.values() if v["agents"] is not None), default=None),
+        "max_hops_from_agents": max(
+            (v["agents"] for v in reach.values() if v["agents"] is not None), default=None
+        ),
         "hops": reach,
     }
 
@@ -201,7 +220,9 @@ def inspect(root: Path) -> dict:
     ref_lines = sum(len(read(p).splitlines()) for p in ref_files)
 
     def line_set(p: Path) -> set[str]:
-        return {s for s in (line.strip() for line in strip_code(read(p)).splitlines()) if len(s) > 15}
+        return {
+            s for s in (line.strip() for line in strip_code(read(p)).splitlines()) if len(s) > 15
+        }
 
     sets = {p: line_set(p) for p in ref_files}
     similar = []
@@ -230,7 +251,10 @@ def inspect(root: Path) -> dict:
             if len(s) >= DUP_MIN_LEN and not set(s) <= set("|-: "):
                 occurrences[s].add(rel(md, root))
     dups = [{"text": t[:120], "files": sorted(fs)} for t, fs in occurrences.items() if len(fs) >= 2]
-    result["duplicated_lines"] = {"count": len(dups), "samples": sorted(dups, key=lambda d: -len(d["files"]))[:15]}
+    result["duplicated_lines"] = {
+        "count": len(dups),
+        "samples": sorted(dups, key=lambda d: -len(d["files"]))[:15],
+    }
 
     # --- scripts --------------------------------------------------------
     stdlib = getattr(sys, "stdlib_module_names", set())
@@ -273,7 +297,9 @@ def inspect(root: Path) -> dict:
         for i, line in enumerate(read(md).splitlines(), 1):
             if TODO_RE.search(line):
                 todos.append(f"{rel(md, root)}:{i}")
-    result["placeholders"] = {k: sorted(v) for k, v in sorted(ph.items(), key=lambda kv: -len(kv[1]))}
+    result["placeholders"] = {
+        k: sorted(v) for k, v in sorted(ph.items(), key=lambda kv: -len(kv[1]))
+    }
     result["todos"] = todos
 
     result["tree"] = [{"file": rel(p, root), "lines": len(read(p).splitlines())} for p in files]
@@ -290,11 +316,15 @@ def to_markdown(r: dict) -> str:
             extra = f" imports={v.get('imports')} alias_only={v.get('alias_only')}"
         out.append(f"- {name}: {'yes' if v['exists'] else 'MISSING'} ({v['lines']} lines){extra}")
     al = r["always_loaded"]
-    out.append(f"- always loaded: {al['lines']} lines {al['files']}" + ("  ⚠ large" if al["warn"] else ""))
+    out.append(
+        f"- always loaded: {al['lines']} lines {al['files']}" + ("  ⚠ large" if al["warn"] else "")
+    )
 
     out += ["", f"## Links (broken {len(r['broken_links'])}, escaping {len(r['escaping_links'])})"]
     out += [f"- BROKEN {b['at']} -> {b['target']}" for b in r["broken_links"]]
-    out += [f"- ESCAPES {e['at']} -> {e['target']} (exists={e['exists']})" for e in r["escaping_links"]]
+    out += [
+        f"- ESCAPES {e['at']} -> {e['target']} (exists={e['exists']})" for e in r["escaping_links"]
+    ]
 
     rc = r["reachability"]
     out += ["", "## Reachability", f"- max hops from AGENTS.md: {rc['max_hops_from_agents']}"]
@@ -303,10 +333,15 @@ def to_markdown(r: dict) -> str:
     out += [f"  - {f}" for f in rc["unreachable_from_agents"][:20]]
 
     ref = r["references"]
-    out += ["", "## References",
-            f"- {ref['files']} files / {ref['lines']} lines ({int(ref['share_of_md_lines'] * 100)}% of all md lines)"]
+    out += [
+        "",
+        "## References",
+        f"- {ref['files']} files / {ref['lines']} lines ({int(ref['share_of_md_lines'] * 100)}% of all md lines)",
+    ]
     out += [f"- largest: {x['file']} ({x['lines']})" for x in ref["largest"]]
-    out += [f"- NEAR-DUP {x['a']} ~ {x['b']} (jaccard {x['jaccard']})" for x in ref["near_duplicates"]]
+    out += [
+        f"- NEAR-DUP {x['a']} ~ {x['b']} (jaccard {x['jaccard']})" for x in ref["near_duplicates"]
+    ]
 
     d = r["duplicated_lines"]
     out += ["", f"## Duplicated lines across files ({d['count']})"]
@@ -314,8 +349,14 @@ def to_markdown(r: dict) -> str:
 
     out += ["", f"## Scripts ({len(r['scripts'])})"]
     for s in r["scripts"]:
-        flags = {k: s[k] for k in ("docstring", "argparse", "pep723", "third_party_imports", "syntax_error") if k in s}
-        out.append(f"- {s['file']} ({s['lines']} lines) documented_in={s['documented_in'] or 'NOWHERE'} {flags}")
+        flags = {
+            k: s[k]
+            for k in ("docstring", "argparse", "pep723", "third_party_imports", "syntax_error")
+            if k in s
+        }
+        out.append(
+            f"- {s['file']} ({s['lines']} lines) documented_in={s['documented_in'] or 'NOWHERE'} {flags}"
+        )
 
     out += ["", "## Placeholders"]
     out += [f"- {k}: {len(v)} files" for k, v in list(r["placeholders"].items())[:15]] or ["- none"]
@@ -326,7 +367,9 @@ def to_markdown(r: dict) -> str:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     ap.add_argument("targets", nargs="+", type=Path, help="template folder(s)")
     ap.add_argument("--json", action="store_true", help="emit JSON instead of markdown")
     args = ap.parse_args()

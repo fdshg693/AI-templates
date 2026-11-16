@@ -155,8 +155,14 @@ class Linter:
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("root", type=Path, help="検査するフォルダ（導入先の __NAME__/、または --examples で references/）")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "root",
+        type=Path,
+        help="検査するフォルダ（導入先の __NAME__/、または --examples で references/）",
+    )
     parser.add_argument("--examples", action="store_true", help="テンプレートの記入例を検査する")
     parser.add_argument("--strict", action="store_true", help="警告もエラー扱いにする")
     args = parser.parse_args()
@@ -169,7 +175,9 @@ def main():
         print(f"error: {msg}")
     for msg in linter.warnings:
         print(f"warning: {msg}")
-    print(f"{linter.checked} files checked, {len(linter.errors)} errors, {len(linter.warnings)} warnings")
+    print(
+        f"{linter.checked} files checked, {len(linter.errors)} errors, {len(linter.warnings)} warnings"
+    )
     failed = linter.errors or (args.strict and linter.warnings)
     return 1 if failed else 0
 
